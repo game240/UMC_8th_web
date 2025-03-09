@@ -1,4 +1,4 @@
-# 8th_spring
+# 8th_web
 
 ## ✨ 깃허브 가이드
 [깃허브 과제 제출 가이드](http://kwu-umc-7th-github.notion.site) 확인하러 가기
