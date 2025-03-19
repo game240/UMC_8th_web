@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./src/styles/button.css" rel="stylesheet" />
+    <link href="./src/styles/styles.css" rel="stylesheet" />
+
+    <script src="./src/scripts.js" type="module" defer></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="todo-wrap">
+      <div class="todo">
+        <h1>TODO</h1>
+
+        <form id="todo-form" class="todo-form">
+          <input type="text" id="todo-input" placeholder="할 일 입력" />
+          <button type="submit" class="green-btn">할 일 추가</button>
+        </form>
+
+        <section class="todo-contents">
+          <section class="todo-list">
+            <h2>할 일</h2>
+            <div id="todo-list-items" class="todo-item-wrap"></div>
+          </section>
+          <section class="todo-completed">
+            <h2>완료</h2>
+            <div id="todo-completed-items" class="todo-item-wrap"></div>
+          </section>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>
