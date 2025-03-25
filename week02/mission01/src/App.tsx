@@ -55,7 +55,7 @@ function App() {
           <section className="todo-contents">
             <section className="todo-list">
               <h2>할 일</h2>
-              <div id="todo-list-items" className="todo-item-wrap">
+              <div className="todo-item-wrap">
                 {
                   // completed가 false인 경우
                   todoLists
@@ -64,7 +64,7 @@ function App() {
                       <div className="todo-item" key={todo.id}>
                         <p>{todo.content}</p>
                         <button
-                          className="todo-list-btn green-btn"
+                          className="todo-inside-btn green-btn"
                           onClick={() => {
                             setTodoLists(
                               todoLists.map((item) => {
@@ -86,9 +86,9 @@ function App() {
                 }
               </div>
             </section>
-            <section className="todo-completed">
+            <section className="todo-list">
               <h2>완료</h2>
-              <div id="todo-completed-items" className="todo-item-wrap">
+              <div className="todo-item-wrap">
                 {
                   // completed가 true인 경우
                   todoLists
@@ -97,7 +97,7 @@ function App() {
                       <div className="todo-item" key={todo.id}>
                         <p>{todo.content}</p>
                         <button
-                          className="todo-completed-btn red-btn"
+                          className="todo-inside-btn red-btn"
                           onClick={() => {
                             setTodoLists(
                               todoLists.filter((item) => {

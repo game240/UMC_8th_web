@@ -57,13 +57,11 @@
   justify-content: space-between;
 }
 
-.todo .todo-list,
-.todo .todo-completed {
+.todo .todo-list {
   width: 220px;
 }
 
-.todo .todo-list h2,
-.todo .todo-completed h2 {
+.todo .todo-list h2 {
   text-align: center;
 }
 
@@ -90,7 +88,7 @@
   border-bottom: 1px solid grey;
 }
 
-.todo .todo-item button {
+.todo .todo-item .todo-inside-btn {
   width: 25%;
   height: 100%;
 }
