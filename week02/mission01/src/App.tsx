@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import TodoButton from "./components/TodoButton";
 import TodoList from "./components/TodoList";
+
+import TodoContext from "./contexts/TodoContexts";
 
 import { Todo } from "./types/todo";
 
@@ -9,8 +11,9 @@ import "./App.css";
 import "./styles/button.css";
 
 function App() {
-  const [todoLists, setTodoLists] = useState<Todo[]>([]);
   const [text, setText] = useState<string>("");
+
+  const { todoLists, addTodo, completeTodo, removeTodo } = useContext(TodoContext)!;
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -18,37 +21,8 @@ function App() {
     if (!text) {
       return;
     }
-    setTodoLists([
-      ...todoLists,
-      {
-        id: todoLists.length + 1,
-        content: text,
-        completed: false,
-      },
-    ]);
+    addTodo(text);
     setText("");
-  };
-
-  const onClickComplete = (id: number) => {
-    setTodoLists(
-      todoLists.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            completed: true,
-          };
-        }
-        return item;
-      })
-    );
-  };
-
-  const onClickRemove = (id: number) => {
-    setTodoLists(
-      todoLists.filter((item) => {
-        return item.id !== id;
-      })
-    );
   };
 
   return (
@@ -84,7 +58,7 @@ function App() {
                       <TodoButton
                         className="green-btn"
                         onClick={() => {
-                          onClickComplete(todo.id);
+                          completeTodo(todo.id);
                         }}
                       >
                         완료
@@ -105,7 +79,7 @@ function App() {
                       <TodoButton
                         className="red-btn"
                         onClick={() => {
-                          onClickRemove(todo.id);
+                          removeTodo(todo.id);
                         }}
                       >
                         삭제
