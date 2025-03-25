@@ -1,14 +1,12 @@
 import { useState } from "react";
 
+import TodoButton from "./components/TodoButton";
+import TodoList from "./components/TodoList";
+
+import { Todo } from "./types/todo";
+
 import "./App.css";
 import "./styles/button.css";
-
-// { id: 1, content: "TS", completed: false }
-type Todo = {
-  id: number;
-  content: string;
-  completed: boolean;
-};
 
 function App() {
   const [todoLists, setTodoLists] = useState<Todo[]>([]);
@@ -29,6 +27,28 @@ function App() {
       },
     ]);
     setText("");
+  };
+
+  const onClickComplete = (id: number) => {
+    setTodoLists(
+      todoLists.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            completed: true,
+          };
+        }
+        return item;
+      })
+    );
+  };
+
+  const onClickRemove = (id: number) => {
+    setTodoLists(
+      todoLists.filter((item) => {
+        return item.id !== id;
+      })
+    );
   };
 
   return (
@@ -56,61 +76,43 @@ function App() {
             <section className="todo-list">
               <h2>할 일</h2>
               <div className="todo-item-wrap">
-                {
-                  // completed가 false인 경우
-                  todoLists
-                    .filter((todo) => !todo.completed)
-                    .map((todo) => (
-                      <div className="todo-item" key={todo.id}>
-                        <p>{todo.content}</p>
-                        <button
-                          className="todo-inside-btn green-btn"
-                          onClick={() => {
-                            setTodoLists(
-                              todoLists.map((item) => {
-                                if (item.id === todo.id) {
-                                  return {
-                                    ...item,
-                                    completed: true,
-                                  };
-                                }
-                                return item;
-                              })
-                            );
-                          }}
-                        >
-                          완료
-                        </button>
-                      </div>
-                    ))
-                }
+                <TodoList
+                  todoLists={todoLists}
+                  condition="proceeding"
+                  renderButton={(todo: Todo) => {
+                    return (
+                      <TodoButton
+                        className="green-btn"
+                        onClick={() => {
+                          onClickComplete(todo.id);
+                        }}
+                      >
+                        완료
+                      </TodoButton>
+                    );
+                  }}
+                />
               </div>
             </section>
             <section className="todo-list">
               <h2>완료</h2>
               <div className="todo-item-wrap">
-                {
-                  // completed가 true인 경우
-                  todoLists
-                    .filter((todo) => todo.completed)
-                    .map((todo) => (
-                      <div className="todo-item" key={todo.id}>
-                        <p>{todo.content}</p>
-                        <button
-                          className="todo-inside-btn red-btn"
-                          onClick={() => {
-                            setTodoLists(
-                              todoLists.filter((item) => {
-                                return item.id !== todo.id;
-                              })
-                            );
-                          }}
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    ))
-                }
+                <TodoList
+                  todoLists={todoLists}
+                  condition="completed"
+                  renderButton={(todo: Todo) => {
+                    return (
+                      <TodoButton
+                        className="red-btn"
+                        onClick={() => {
+                          onClickRemove(todo.id);
+                        }}
+                      >
+                        삭제
+                      </TodoButton>
+                    );
+                  }}
+                />
               </div>
             </section>
           </section>
