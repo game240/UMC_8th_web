@@ -22,10 +22,10 @@ export const TodoProvider = ({ children }: TodoProviderProps) => {
    * @param {string} content - 할 일 내용
    */
   const addTodo = (content: string) => {
-    setTodoLists([
-      ...todoLists,
+    setTodoLists((prev) => [
+      ...prev,
       {
-        id: todoLists.length + 1,
+        id: prev.length + 1,
         content: content,
         completed: false,
       },
@@ -33,25 +33,13 @@ export const TodoProvider = ({ children }: TodoProviderProps) => {
   };
 
   const completeTodo = (id: number) => {
-    setTodoLists(
-      todoLists.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            completed: true,
-          };
-        }
-        return item;
-      })
+    setTodoLists((prev) =>
+      prev.map((todo) => (todo.id === id ? { ...todo, completed: true } : todo))
     );
   };
 
   const removeTodo = (id: number) => {
-    setTodoLists(
-      todoLists.filter((item) => {
-        return item.id !== id;
-      })
-    );
+    setTodoLists((prev) => prev.filter((todo) => todo.id !== id));
   };
 
   return (
