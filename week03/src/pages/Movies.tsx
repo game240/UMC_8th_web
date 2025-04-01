@@ -1,15 +1,23 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import { Movie, MovieResponse } from "./../types/movie";
+import Loading from "../components/Loading";
 
-const MoviesPage = () => {
+import { Category, Movie, MovieResponse } from "./../types/movie";
+
+const Movies = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const params = useParams<{ category: Category }>();
 
   useEffect(() => {
     const fetchMovies = async () => {
       const { data } = await axios.get<MovieResponse>(
-        `https://api.themoviedb.org/3/movie/popular?language=en-US&page=1`,
+        `https://api.themoviedb.org/3/movie/${params.category}?language=en-US&page=1`,
         {
           headers: {
             Authorization:
@@ -21,8 +29,23 @@ const MoviesPage = () => {
       setMovies(data.results);
     };
 
-    fetchMovies();
-  }, []);
+    try {
+      setLoading(true);
+      fetchMovies();
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [params]);
+
+  if (error) {
+    return <div className="text-red-500">Error occurred</div>;
+  }
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <section className="movies grid gap-4 grid-cols-6">
@@ -47,4 +70,4 @@ const MoviesPage = () => {
   );
 };
 
-export default MoviesPage;
+export default Movies;

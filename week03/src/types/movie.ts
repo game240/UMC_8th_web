@@ -21,3 +21,5 @@ export type MovieResponse = {
   total_pages: number;
   total_results: number;
 };
+
+export type Category = "all" | "popular" | "now_playing" | "top_rated" | "upcoming";
