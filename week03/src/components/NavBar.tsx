@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 import TextBtn from "./TextBtn";
 
-import { TextBtnProps } from "../types/button";
+import { BtnProps } from "../types/button";
 import { Category } from "../types/movie";
 
-interface NavBtnProps extends TextBtnProps {
+interface NavBtnProps extends BtnProps {
   route: string;
   category: Category;
 }

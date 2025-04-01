@@ -1,6 +1,6 @@
-import { TextBtnProps } from "../types/button";
+import { BtnProps } from "../types/button";
 
-const TextBtn: React.FC<TextBtnProps> = ({ children, className, ...props }) => {
+const TextBtn: React.FC<BtnProps> = ({ children, className, ...props }) => {
   return (
     <button
       className={`border-none bg-transparent cursor-pointer text-gray-500 ${className} `}

@@ -1,4 +1,4 @@
-export interface TextBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface BtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
   children?: React.ReactNode;
 }
