@@ -4,7 +4,7 @@ import NavBar from "../components/NavBar";
 
 const DefaultLayout = () => {
   return (
-    <div className="bg-black">
+    <div className="bg-black w-screen">
       <div className="mx-48 min-h-screen">
         <NavBar />
         <Outlet />
