@@ -4,9 +4,11 @@ import NavBar from "../components/NavBar";
 
 const DefaultLayout = () => {
   return (
-    <div className="mx-48">
-      <NavBar />
-      <Outlet />
+    <div className="bg-black">
+      <div className="mx-48 min-h-screen">
+        <NavBar />
+        <Outlet />
+      </div>
     </div>
   );
 };
