@@ -10,7 +10,7 @@ const router = createBrowserRouter([
     element: <DefaultLayout />,
     children: [
       {
-        path: "movies/:category",
+        path: "movies/:category/:page?",
         element: <Movies />,
       },
     ],
