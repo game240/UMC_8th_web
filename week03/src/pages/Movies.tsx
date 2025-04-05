@@ -12,7 +12,7 @@ const MoviesPage = () => {
         `https://api.themoviedb.org/3/movie/popular?language=en-US&page=1`,
         {
           headers: {
-            Authorization: "Bearer ${import.meta.env.VITE_API_ACCESS_TOKEN}",
+            Authorization: `Bearer ${import.meta.env.VITE_API_ACCESS_TOKEN}`,
           },
         }
       );
