@@ -22,8 +22,7 @@ const Movies = () => {
         `https://api.themoviedb.org/3/movie/${params.category}?language=en-US&page=${page}`,
         {
           headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZTE4YmRhOWZlZDk4NjRhY2YyYTQ2N2I3YzM4YmY4OSIsIm5iZiI6MTc0MzQ4MjM1NS44MzgsInN1YiI6IjY3ZWI2ZGYzYjBhOWFjNzQxNThiZThmNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ztseE0n6bFTVAkH3MypMnwokoVGh9IkTcdl6nKkmUpI",
+            Authorization: "Bearer ${import.meta.env.VITE_API_ACCESS_TOKEN}",
           },
         }
       );
