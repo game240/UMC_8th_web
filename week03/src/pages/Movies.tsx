@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Loading from "../components/Loading";
 import PageBtn from "../components/PageBtn";
@@ -15,6 +15,7 @@ const Movies = () => {
   const [error, setError] = useState(false);
 
   const params = useParams<{ category: Category }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -22,8 +23,7 @@ const Movies = () => {
         `https://api.themoviedb.org/3/movie/${params.category}?language=en-US&page=${page}`,
         {
           headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZTE4YmRhOWZlZDk4NjRhY2YyYTQ2N2I3YzM4YmY4OSIsIm5iZiI6MTc0MzQ4MjM1NS44MzgsInN1YiI6IjY3ZWI2ZGYzYjBhOWFjNzQxNThiZThmNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ztseE0n6bFTVAkH3MypMnwokoVGh9IkTcdl6nKkmUpI",
+            Authorization: `Bearer ${import.meta.env.VITE_API_ACCESS_TOKEN}`,
           },
         }
       );
@@ -62,7 +62,7 @@ const Movies = () => {
         >
           {"<"}
         </PageBtn>
-        <p>{page} 페이지</p>
+        <p className="text-gray-300">{page} 페이지</p>
         <PageBtn
           className="bg-green-300"
           onClick={() => {
@@ -76,8 +76,15 @@ const Movies = () => {
         {movies?.map((movie) => (
           <div
             key={movie.id}
-            className="relative group bg-cover bg-center h-60 rounded-lg flex items-center justify-center cursor-pointer"
+            className="relative group bg-cover bg-center h-60 rounded-lg flex items-center justify-center"
           >
+            {/* 클릭용 더미 버튼 추가 */}
+            <button
+              className="absolute w-full h-full z-20 cursor-pointer"
+              onClick={() => {
+                navigate(`/movies/detail/${movie.id}`);
+              }}
+            ></button>
             <img
               className="absolute w-full h-full rounded-lg group-hover:blur-sm transition-all duration-300"
               src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}

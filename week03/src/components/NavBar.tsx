@@ -31,7 +31,7 @@ const NavBar = () => {
 
   return (
     <nav className="flex gap-2 h-16">
-      <NavBtn route="/movies" category="all">
+      <NavBtn route="/movies/home" category="all">
         홈
       </NavBtn>
       <NavBtn route="/movies/popular" category="popular">
