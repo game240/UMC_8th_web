@@ -9,37 +9,38 @@ import { Category, Movie, MovieResponse } from "./../types/movie";
 
 const Movies = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [page, setPage] = useState(1);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const params = useParams<{ category: Category }>();
+  const { category, page } = useParams<{ category: Category; page?: string }>();
+  const currentPage = page ? parseInt(page) : 1;
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovies = async () => {
-      const { data } = await axios.get<MovieResponse>(
-        `https://api.themoviedb.org/3/movie/${params.category}?language=en-US&page=${page}`,
-        {
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_API_ACCESS_TOKEN}`,
-          },
-        }
-      );
+      setLoading(true);
+      try {
+        const { data } = await axios.get<MovieResponse>(
+          `https://api.themoviedb.org/3/movie/${category}?language=en-US&page=${currentPage}`,
+          {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_API_ACCESS_TOKEN}`,
+            },
+          }
+        );
 
-      setMovies(data.results);
+        setMovies(data.results);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    try {
-      setLoading(true);
-      fetchMovies();
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [params, page]);
+    fetchMovies();
+  }, [category, currentPage]);
 
   if (error) {
     return <div className="text-red-500">Error occurred</div>;
@@ -53,20 +54,20 @@ const Movies = () => {
     <>
       <div className="flex justify-center items-center gap-4 mb-8">
         <PageBtn
-          className={page !== 1 ? "bg-purple-300" : "bg-gray-300"}
+          className={currentPage !== 1 ? "bg-purple-300" : "bg-gray-300"}
           onClick={() => {
-            if (page > 1) {
-              setPage(page - 1);
+            if (currentPage > 1) {
+              navigate(`/movies/${category}/${currentPage - 1}`);
             }
           }}
         >
           {"<"}
         </PageBtn>
-        <p className="text-gray-300">{page} 페이지</p>
+        <p className="text-gray-300">{currentPage} 페이지</p>
         <PageBtn
           className="bg-green-300"
           onClick={() => {
-            setPage(page + 1);
+            navigate(`/movies/${category}/${currentPage + 1}`);
           }}
         >
           {">"}
