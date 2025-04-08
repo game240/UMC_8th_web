@@ -1,46 +1,29 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Loading from "../components/Loading";
 import PageBtn from "../components/PageBtn";
 
+import useApiRequest from "../../../week04/src/hooks/useApiRequest";
+
 import { Category, Movie, MovieResponse } from "./../types/movie";
 
 const Movies = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
   const { category, page } = useParams<{ category: Category; page?: string }>();
   const currentPage = page ? parseInt(page) : 1;
 
   const navigate = useNavigate();
+  const { data, loading, error } = useApiRequest<MovieResponse>(
+    `https://api.themoviedb.org/3/movie/${category}?language=en-US&page=${currentPage}`
+  );
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      setLoading(true);
-      try {
-        const { data } = await axios.get<MovieResponse>(
-          `https://api.themoviedb.org/3/movie/${category}?language=en-US&page=${currentPage}`,
-          {
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_API_ACCESS_TOKEN}`,
-            },
-          }
-        );
-
-        setMovies(data.results);
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMovies();
-  }, [category, currentPage]);
+    if (data) {
+      setMovies(data.results);
+    }
+  }, [data]);
 
   if (error) {
     return <div className="text-red-500">Error occurred</div>;
