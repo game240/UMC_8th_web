@@ -6,6 +6,7 @@ import TextField from "../components/TextField";
 import { EMAIL_REGEX } from "../constants/regex";
 
 import google from "./../assets/google.png";
+import BottomBtn from "../components/BottomBtn";
 
 const Login = () => {
   const {
@@ -84,13 +85,7 @@ const Login = () => {
           helperText={errors.password?.message}
         />
 
-        <button
-          type="submit"
-          className="w-full h-10 rounded-[8px] text-white bg-[#111]"
-          disabled={!isValid}
-        >
-          로그인
-        </button>
+        <BottomBtn disabled={!isValid}>로그인</BottomBtn>
       </div>
     </form>
   );
