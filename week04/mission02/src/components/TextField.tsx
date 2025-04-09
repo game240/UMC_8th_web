@@ -1,13 +1,17 @@
-import "./TextField.css";
+interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  error?: boolean;
+  helperText?: string;
+}
 
-// interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {}
-
-const TextField: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = ({ ...props }) => {
+const TextField: React.FC<TextFieldProps> = ({ error, helperText = "", ...props }) => {
   return (
-    <input
-      className="__text-field__ w-full h-10 rounded-[4px] p-2 mb-4 border-[1px] border-[#fff] bg-transparent"
-      {...props}
-    />
+    <div className="w-full">
+      <input
+        className="__text-field__ w-full h-10 rounded-[4px] p-2 mb-4 border-[1px] border-[#fff] bg-transparent"
+        {...props}
+      />
+      {error && <p className="text-red-600 text-xs">{helperText}</p>}
+    </div>
   );
 };
 
