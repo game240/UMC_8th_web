@@ -27,10 +27,16 @@ const Login = () => {
       show: email.value.length > 0,
       format: EMAIL_REGEX.test(prevEmail.value),
     }));
-  }, [email.value]);
+    setPassword((prevPassword) => ({
+      ...prevPassword,
+      show: password.value.length > 0,
+      format: password.value.length >= 8,
+    }));
+  }, [email.value, password.value]);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full pt-20 text-white">
+    // TODO: onSubmit 연결 필요
+    <form className="flex flex-col items-center justify-center w-full pt-20 text-white">
       <div className="relative w-[300px] flex justify-center">
         <button
           className="text-xl absolute left-2"
@@ -77,12 +83,18 @@ const Login = () => {
               value: event.target.value,
             }));
           }}
+          error={password.show && !password.format}
+          helperText="비밀번호는 8자 이상이어야 합니다."
         />
-        <button className="w-full h-10 rounded-[8px] text-white bg-[#111]" disabled>
+        <button
+          type="submit"
+          className="w-full h-10 rounded-[8px] text-white bg-[#111]"
+          disabled={!email.format || !password.format}
+        >
           로그인
         </button>
       </div>
-    </div>
+    </form>
   );
 };
 
