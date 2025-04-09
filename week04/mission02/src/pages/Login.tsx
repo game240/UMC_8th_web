@@ -62,7 +62,7 @@ const Login = () => {
           type="text"
           placeholder="이메일을 입력해주세요!"
           {...register("email", {
-            required: "",
+            required: true,
             pattern: {
               value: EMAIL_REGEX,
               message: "올바른 이메일 형식을 입력해주세요.",
@@ -75,7 +75,7 @@ const Login = () => {
           type="password"
           placeholder="비밀번호를 입력해주세요!"
           {...register("password", {
-            required: "",
+            required: true,
             minLength: {
               value: 8,
               message: "비밀번호는 8자 이상이어야 합니다.",
