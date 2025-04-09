@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import TextField from "../components/TextField";
 
@@ -8,10 +9,19 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col items-center justify-center w-full pt-20 text-white">
       <div className="relative w-[300px] flex justify-center">
-        <button className="text-xl absolute left-2">{"<"}</button>
+        <button
+          className="text-xl absolute left-2"
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          {"<"}
+        </button>
         <h1 className="text-xl">로그인</h1>
       </div>
       <div className="flex flex-col items-center gap-4 mt-8 w-[300px]">
