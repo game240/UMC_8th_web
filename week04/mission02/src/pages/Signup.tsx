@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -6,13 +7,33 @@ import BottomBtn from "../components/BottomBtn";
 import TextField from "../components/textfield/TextField";
 import TextFieldPw from "../components/textfield/TextFieldPw";
 
+import axiosClient from "../services/api";
+
 import { EMAIL_REGEX } from "../constants/regex";
 
 import google from "./../assets/google.png";
 
+interface SignupRequest {
+  name: string;
+  email: string;
+  bio?: string;
+  avatar?: string;
+  password: string;
+}
+
+interface SignupResponse {
+  id: number;
+  name: string;
+  email: string;
+  bio: string | null;
+  avatar: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const Signup = () => {
   /** 0: 이메일, 1: 비밀번호, 2: 프로필 */
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(0);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +45,7 @@ const Signup = () => {
     formState: { errors, isValid },
   } = useForm({
     mode: "onChange",
+    shouldUnregister: true,
     defaultValues: {
       email: "",
       password: "",
@@ -34,26 +56,41 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
-  const onClickRegister = () => {};
+  const onClickRegister = async () => {
+    try {
+      const { data } = await axiosClient.post<SignupResponse>("/v1/auth/signup", {
+        name: watch("name"),
+        email,
+        password,
+      } as SignupRequest);
+
+      console.log(data);
+      alert("회원가입에 성공했습니다.");
+
+      navigate("/login");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alert(error?.response?.data.message);
+      } else {
+        alert("회원가입에 실패했습니다.");
+      }
+    }
+  };
 
   return (
     <form
       onSubmit={(event) => {
+        // 새로고침 방지
+        event.preventDefault();
         if (step === 0) {
-          // 새로고침 방지
-          event.preventDefault();
-
           setEmail(watch("email"));
           setStep((prev) => prev + 1);
         } else if (step === 1) {
-          // 새로고침 방지
-          event.preventDefault();
-
           setPassword(watch("password"));
           setStep((prev) => prev + 1);
+        } else {
+          handleSubmit(onClickRegister)(); // 바로 함수 실행
         }
-        // if (step === end) {
-        handleSubmit(onClickRegister);
       }}
       className="flex flex-col items-center justify-center w-full pt-20 text-white"
     >

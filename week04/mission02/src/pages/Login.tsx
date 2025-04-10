@@ -1,12 +1,26 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
+import BottomBtn from "../components/BottomBtn";
 import TextField from "../components/textfield/TextField";
 
 import { EMAIL_REGEX } from "../constants/regex";
 
 import google from "./../assets/google.png";
-import BottomBtn from "../components/BottomBtn";
+import axiosClient from "../services/api";
+import { AxiosError } from "axios";
+
+interface SigninRequest {
+  email: string;
+  password: string;
+}
+
+interface SigninResponse {
+  id: number;
+  name: string;
+  accessToken: string;
+  refreshToken: string;
+}
 
 const Login = () => {
   const {
@@ -24,7 +38,23 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const onSubmit = () => {};
+  const onSubmit = async () => {
+    try {
+      const { data } = await axiosClient.post<SigninResponse>("/v1/auth/signin", {
+        email: watch("email"),
+        password: watch("password"),
+      } as SigninRequest);
+
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alert(error?.response?.data.message);
+      } else {
+        alert("로그인에 실패했습니다.");
+      }
+    }
+  };
 
   return (
     <form
