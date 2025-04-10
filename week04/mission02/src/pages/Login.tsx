@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-import TextField from "../components/TextField";
+import TextField from "../components/textfield/TextField";
 
 import { EMAIL_REGEX } from "../constants/regex";
 
