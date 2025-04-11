@@ -23,10 +23,12 @@ const signinSchema = z.object({
 type SigninRequest = z.infer<typeof signinSchema>;
 
 interface SigninResponse {
-  id: number;
-  name: string;
-  accessToken: string;
-  refreshToken: string;
+  data: {
+    id: number;
+    name: string;
+    accessToken: string;
+    refreshToken: string;
+  };
 }
 
 const Login = () => {
@@ -53,10 +55,10 @@ const Login = () => {
     try {
       const { data } = await axiosClient.post<SigninResponse>("/v1/auth/signin", zData);
 
-      alert("로그인 성공!");
+      setAccessToken(data.data.accessToken);
+      setRefreshToken(data.data.refreshToken);
 
-      setAccessToken(data.accessToken);
-      setRefreshToken(data.refreshToken);
+      alert("로그인 성공!");
     } catch (error) {
       if (error instanceof AxiosError) {
         alert(error?.response?.data.message);
