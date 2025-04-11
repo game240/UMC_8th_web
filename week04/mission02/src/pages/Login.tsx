@@ -1,19 +1,24 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 
 import BottomBtn from "../components/BottomBtn";
 import TextField from "../components/textfield/TextField";
 
+import axiosClient from "../services/api";
+
 import { EMAIL_REGEX } from "../constants/regex";
 
 import google from "./../assets/google.png";
-import axiosClient from "../services/api";
-import { AxiosError } from "axios";
 
-interface SigninRequest {
-  email: string;
-  password: string;
-}
+const signinSchema = z.object({
+  email: z.string().nonempty().regex(EMAIL_REGEX, "올바른 이메일 형식을 입력해주세요."),
+  password: z.string().nonempty().min(8, "비밀번호는 8자 이상이어야 합니다."),
+});
+
+type SigninRequest = z.infer<typeof signinSchema>;
 
 interface SigninResponse {
   id: number;
@@ -30,6 +35,7 @@ const Login = () => {
     formState: { errors, isValid },
   } = useForm({
     mode: "onChange",
+    resolver: zodResolver(signinSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -38,12 +44,11 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const onSubmit = async () => {
+  const onSubmit = async (zData: SigninRequest) => {
     try {
-      const { data } = await axiosClient.post<SigninResponse>("/v1/auth/signin", {
-        email: watch("email"),
-        password: watch("password"),
-      } as SigninRequest);
+      const { data } = await axiosClient.post<SigninResponse>("/v1/auth/signin", zData);
+
+      alert("로그인 성공!");
 
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
@@ -91,26 +96,14 @@ const Login = () => {
         <TextField
           type="text"
           placeholder="이메일을 입력해주세요!"
-          {...register("email", {
-            required: true,
-            pattern: {
-              value: EMAIL_REGEX,
-              message: "올바른 이메일 형식을 입력해주세요.",
-            },
-          })}
+          {...register("email")}
           error={watch("email")?.length > 0 && !!errors.email}
           helperText={errors.email?.message}
         />
         <TextField
           type="password"
           placeholder="비밀번호를 입력해주세요!"
-          {...register("password", {
-            required: true,
-            minLength: {
-              value: 8,
-              message: "비밀번호는 8자 이상이어야 합니다.",
-            },
-          })}
+          {...register("password")}
           error={watch("password")?.length > 0 && !!errors.password}
           helperText={errors.password?.message}
         />

@@ -1,7 +1,9 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 
 import BottomBtn from "../components/BottomBtn";
 import TextField from "../components/textfield/TextField";
@@ -12,6 +14,16 @@ import axiosClient from "../services/api";
 import { EMAIL_REGEX } from "../constants/regex";
 
 import google from "./../assets/google.png";
+
+const signupSchema = z.object({
+  email: z.string().nonempty().regex(EMAIL_REGEX, "올바른 이메일 형식을 입력해주세요.").optional(),
+  password: z.string().nonempty().min(8, "비밀번호는 8자 이상이어야 합니다!").optional(),
+  passwordCheck: z.string().nonempty().optional(),
+  name: z.string().nonempty().optional(),
+  // 나중에 추가될 수 있음
+  bio: z.string().optional(),
+  avatar: z.string().optional(),
+});
 
 interface SignupRequest {
   name: string;
@@ -38,20 +50,30 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // let currentStepSchema
+  let defaultValues;
+  if (step === 0) {
+    // currentStepSchema = emailSchema;
+    defaultValues = { email: "" };
+  } else if (step === 1) {
+    // currentStepSchema = passwordSchema;
+    defaultValues = { password: "", passwordCheck: "" };
+  } else {
+    // currentStepSchema = nameSchema;
+    defaultValues = { name: "" };
+  }
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors, isValid },
+    trigger,
   } = useForm({
     mode: "onChange",
+    resolver: zodResolver(signupSchema),
     shouldUnregister: true,
-    defaultValues: {
-      email: "",
-      password: "",
-      passwordCheck: "",
-      name: "",
-    },
+    defaultValues: defaultValues,
   });
 
   const navigate = useNavigate();
@@ -79,15 +101,24 @@ const Signup = () => {
 
   return (
     <form
+      key={step}
       onSubmit={(event) => {
         // 새로고침 방지
         event.preventDefault();
         if (step === 0) {
-          setEmail(watch("email"));
-          setStep((prev) => prev + 1);
+          trigger("email").then((valid) => {
+            if (valid) {
+              setEmail(watch("email") ?? "");
+              setStep((prev) => prev + 1);
+            }
+          });
         } else if (step === 1) {
-          setPassword(watch("password"));
-          setStep((prev) => prev + 1);
+          trigger(["password", "passwordCheck"]).then((valid) => {
+            if (valid) {
+              setPassword(watch("password") ?? "");
+              setStep((prev) => prev + 1);
+            }
+          });
         } else {
           handleSubmit(onClickRegister)(); // 바로 함수 실행
         }
@@ -134,14 +165,8 @@ const Signup = () => {
             <TextField
               type="text"
               placeholder="이메일을 입력해주세요!"
-              {...register("email", {
-                required: true,
-                pattern: {
-                  value: EMAIL_REGEX,
-                  message: "올바른 이메일 형식을 입력해주세요.",
-                },
-              })}
-              error={watch("email")?.length > 0 && !!errors.email}
+              {...register("email")}
+              error={(watch("email")?.length ?? 0) > 0 && !!errors.email}
               helperText={errors.email?.message}
             />
             <BottomBtn disabled={!isValid}>다음</BottomBtn>
@@ -152,24 +177,15 @@ const Signup = () => {
             <TextFieldPw
               type="password"
               placeholder="비밀번호를 입력해주세요!"
-              {...register("password", {
-                required: true,
-                minLength: {
-                  value: 8,
-                  message: "비밀번호는 8자 이상이어야 합니다.",
-                },
-              })}
-              error={watch("password")?.length > 0 && !!errors.password}
+              {...register("password")}
+              error={(watch("password")?.length ?? 0) > 0 && !!errors.password}
               helperText={errors.password?.message}
             />
             <TextFieldPw
               type="password"
               placeholder="비밀번호를 다시 한 번 입력해주세요!"
-              {...register("passwordCheck", {
-                required: true,
-                validate: (value) => value === watch("password") || "비밀번호가 일치하지 않습니다.",
-              })}
-              error={watch("passwordCheck")?.length > 0 && !!errors.passwordCheck}
+              {...register("passwordCheck")}
+              error={(watch("passwordCheck")?.length ?? 0) > 0 && !!errors.passwordCheck}
               helperText={errors.passwordCheck?.message}
             />
 
@@ -178,17 +194,7 @@ const Signup = () => {
         ) : (
           <>
             <div className="w-40 h-40 bg-white rounded-full mb-4"></div>
-            <TextField
-              type="text"
-              placeholder="닉네임을 입력해주세요!"
-              {...register("name", {
-                required: true,
-                minLength: {
-                  value: 1,
-                  message: "",
-                },
-              })}
-            />
+            <TextField type="text" placeholder="닉네임을 입력해주세요!" {...register("name")} />
 
             <BottomBtn disabled={!isValid}>회원가입 완료</BottomBtn>
           </>
