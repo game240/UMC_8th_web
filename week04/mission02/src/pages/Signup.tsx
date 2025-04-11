@@ -15,15 +15,24 @@ import { EMAIL_REGEX } from "../constants/regex";
 
 import google from "./../assets/google.png";
 
-const signupSchema = z.object({
-  email: z.string().nonempty().regex(EMAIL_REGEX, "올바른 이메일 형식을 입력해주세요.").optional(),
-  password: z.string().nonempty().min(8, "비밀번호는 8자 이상이어야 합니다!").optional(),
-  passwordCheck: z.string().nonempty().optional(),
-  name: z.string().nonempty().optional(),
-  // 나중에 추가될 수 있음
-  bio: z.string().optional(),
-  avatar: z.string().optional(),
-});
+const signupSchema = z
+  .object({
+    email: z
+      .string()
+      .nonempty()
+      .regex(EMAIL_REGEX, "올바른 이메일 형식을 입력해주세요.")
+      .optional(),
+    password: z.string().nonempty().min(8, "비밀번호는 8자 이상이어야 합니다!").optional(),
+    passwordCheck: z.string().nonempty().optional(),
+    name: z.string().nonempty().optional(),
+    // 나중에 추가될 수 있음
+    bio: z.string().optional(),
+    avatar: z.string().optional(),
+  })
+  .refine((data) => data.password === data.passwordCheck, {
+    message: "비밀번호가 일치하지 않습니다.",
+    path: ["passwordCheck"],
+  });
 
 interface SignupRequest {
   name: string;
