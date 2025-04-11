@@ -7,6 +7,8 @@ import { z } from "zod";
 import BottomBtn from "../components/BottomBtn";
 import TextField from "../components/textfield/TextField";
 
+import { useLocalStorage } from "../hooks/useLocalStorage";
+
 import axiosClient from "../services/api";
 
 import { EMAIL_REGEX } from "../constants/regex";
@@ -42,6 +44,9 @@ const Login = () => {
     },
   });
 
+  const { setItem: setAccessToken } = useLocalStorage("accessToken");
+  const { setItem: setRefreshToken } = useLocalStorage("refreshToken");
+
   const navigate = useNavigate();
 
   const onSubmit = async (zData: SigninRequest) => {
@@ -50,8 +55,8 @@ const Login = () => {
 
       alert("로그인 성공!");
 
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
+      setAccessToken(data.accessToken);
+      setRefreshToken(data.refreshToken);
     } catch (error) {
       if (error instanceof AxiosError) {
         alert(error?.response?.data.message);
