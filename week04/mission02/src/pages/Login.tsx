@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import BottomBtn from "../components/BottomBtn";
 import TextField from "../components/textfield/TextField";
+import TextFieldPw from "../components/textfield/TextFieldPw";
 
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
@@ -107,7 +108,7 @@ const Login = () => {
           error={watch("email")?.length > 0 && !!errors.email}
           helperText={errors.email?.message}
         />
-        <TextField
+        <TextFieldPw
           type="password"
           placeholder="비밀번호를 입력해주세요!"
           {...register("password")}
