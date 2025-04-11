@@ -1,9 +1,11 @@
 import { useParams } from "react-router-dom";
 
-import { CreditsResponse, MovieDetailResponse } from "../types/movie";
-import MovieDetailCredit from "../components/MovieDetailCredit";
 import Loading from "../components/Loading";
-import useApiRequest from "../../../week04/src/hooks/useApiRequest";
+import MovieDetailCredit from "../components/MovieDetailCredit";
+
+import useApiRequest from "../hooks/useApiRequest";
+
+import { CreditsResponse, MovieDetailResponse } from "../types/movie";
 
 const MovieDetail = () => {
   const { id } = useParams<{ id: string }>();

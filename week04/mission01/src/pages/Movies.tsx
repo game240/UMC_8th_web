@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../components/Loading";
 import PageBtn from "../components/PageBtn";
 
-import useApiRequest from "../../../week04/src/hooks/useApiRequest";
+import useApiRequest from "../hooks/useApiRequest";
 
 import { Category, Movie, MovieResponse } from "./../types/movie";
 
