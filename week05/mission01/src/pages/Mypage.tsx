@@ -7,7 +7,6 @@ const Mypage = () => {
 
   try {
     axiosClient.get("/v1/auth/protected");
-    alert("내 정보 조회 성공!");
   } catch (error) {
     if (error instanceof AxiosError) {
       alert(error?.response?.data.message);
