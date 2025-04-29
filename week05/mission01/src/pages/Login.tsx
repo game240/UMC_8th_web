@@ -2,13 +2,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import { z } from "zod";
 
 import BottomBtn from "../components/BottomBtn";
 import TextField from "../components/textfield/TextField";
 import TextFieldPw from "../components/textfield/TextFieldPw";
 
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import AuthContext from "../contexts/AuthContext";
 
 import axiosClient from "../services/api";
 
@@ -46,9 +47,7 @@ const Login = () => {
       password: "",
     },
   });
-
-  const { setItem: setAccessToken } = useLocalStorage("accessToken");
-  const { setItem: setRefreshToken } = useLocalStorage("refreshToken");
+  const { signIn } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -56,8 +55,9 @@ const Login = () => {
     try {
       const { data } = await axiosClient.post<SigninResponse>("/v1/auth/signin", zData);
 
-      setAccessToken(data.data.accessToken);
-      setRefreshToken(data.data.refreshToken);
+      if (data) {
+        signIn(data.data.accessToken, data.data.refreshToken);
+      }
 
       alert("로그인 성공!");
     } catch (error) {
