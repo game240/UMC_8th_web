@@ -4,9 +4,11 @@ import DefaultLayout from "./layouts/DefaultLayout";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Mypage from "./pages/Mypage";
+
+import ProtectedRoute from "./components/route/ProtectedRoute";
 
 import "./App.css";
-import ProtectedRoute from "./components/route/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -26,7 +28,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: "mypage",
-            element: <div>마이페이지</div>,
+            element: <Mypage />,
           },
         ],
       },

@@ -16,6 +16,7 @@ import axiosClient from "../services/api";
 import { EMAIL_REGEX } from "../constants/regex";
 
 import google from "./../assets/google.png";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const signinSchema = z.object({
   email: z.string().nonempty().regex(EMAIL_REGEX, "올바른 이메일 형식을 입력해주세요."),
@@ -48,6 +49,7 @@ const Login = () => {
     },
   });
   const { signIn } = useContext(AuthContext)!;
+  const { setItem: setName } = useLocalStorage("name");
 
   const navigate = useNavigate();
 
@@ -57,6 +59,7 @@ const Login = () => {
 
       if (data) {
         signIn(data.data.accessToken, data.data.refreshToken);
+        setName(data.data.name);
       }
 
       alert("로그인 성공!");
