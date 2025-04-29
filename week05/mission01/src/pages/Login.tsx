@@ -60,6 +60,7 @@ const Login = () => {
       }
 
       alert("로그인 성공!");
+      navigate("/");
     } catch (error) {
       if (error instanceof AxiosError) {
         alert(error?.response?.data.message);

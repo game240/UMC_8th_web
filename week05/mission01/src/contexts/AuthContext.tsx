@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useEffect, useState } from "react";
+import { createContext, PropsWithChildren, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 interface AuthContextType {
@@ -25,13 +25,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const [accessToken, setAccessToken] = useState<string | null>(getAccessTokenItem());
   const [refreshToken, setRefreshToken] = useState<string | null>(getRefreshTokenItem());
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (accessToken) {
-      setIsAuthenticated(true);
-    }
-  }, [accessToken, setAccessTokenItem]);
+  const isAuthenticated = !!accessToken;
 
   const signIn = (accessToken: string, refreshToken: string) => {
     setAccessToken(accessToken);
