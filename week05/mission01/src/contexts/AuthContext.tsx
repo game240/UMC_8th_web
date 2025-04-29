@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useState } from "react";
+import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 interface AuthContextType {
@@ -6,14 +6,10 @@ interface AuthContextType {
   refreshToken: string | null;
   signIn: (accessToken: string, refreshToken: string) => void;
   signOut: () => void;
+  isAuthenticated: boolean;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  accessToken: null,
-  refreshToken: null,
-  signIn: () => {},
-  signOut: () => {},
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const {
@@ -29,6 +25,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const [accessToken, setAccessToken] = useState<string | null>(getAccessTokenItem());
   const [refreshToken, setRefreshToken] = useState<string | null>(getRefreshTokenItem());
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (accessToken) {
+      setIsAuthenticated(true);
+    }
+  }, [accessToken, setAccessTokenItem]);
 
   const signIn = (accessToken: string, refreshToken: string) => {
     setAccessToken(accessToken);
@@ -45,7 +48,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   };
 
   return (
-    <AuthContext.Provider value={{ accessToken, refreshToken, signIn, signOut }}>
+    <AuthContext.Provider value={{ accessToken, refreshToken, signIn, signOut, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
