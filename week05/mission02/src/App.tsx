@@ -7,7 +7,7 @@ import Signup from "./pages/Signup";
 import Mypage from "./pages/Mypage";
 import Landing from "./pages/Landing";
 
-import ProtectedRoute from "./components/route/ProtectedRoute";
+import ProtectedRoute from "./route/ProtectedRoute";
 
 import "./App.css";
 

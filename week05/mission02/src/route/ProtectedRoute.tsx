@@ -1,11 +1,16 @@
 import { useContext } from "react";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
 
-import AuthContext from "../../contexts/AuthContext";
+import AuthContext from "../contexts/AuthContext";
 
 const ProtectedRoute = () => {
-  const { isAuthenticated } = useContext(AuthContext)!;
+  const { isAuthenticated, isInitializing } = useContext(AuthContext)!;
   const location = useLocation();
+
+  // under init: do nothing
+  if (isInitializing) {
+    return null;
+  }
 
   if (!isAuthenticated) {
     alert("로그인이 필요한 페이지입니다.");

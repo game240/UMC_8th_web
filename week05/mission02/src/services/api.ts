@@ -9,19 +9,19 @@ const axiosClient = axios.create({
   },
 });
 
+axiosClient.interceptors.request.use(
+  (config) => {
+    const { getItem: getAccessTokenItem } = useLocalStorage("accessToken");
+    const token = getAccessTokenItem();
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export default axiosClient;
-
-axiosClient.interceptors.request.use((config) => {
-  const { getItem: getAccessToken } = useLocalStorage("accessToken");
-  const { getItem: getRefreshToken } = useLocalStorage("refreshToken");
-
-  const accessToken = getAccessToken();
-  const refreshToken = getRefreshToken();
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  if (refreshToken) {
-    config.headers["Refresh-Token"] = refreshToken;
-  }
-  return config;
-});
