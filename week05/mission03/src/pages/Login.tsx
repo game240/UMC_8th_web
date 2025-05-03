@@ -11,12 +11,13 @@ import TextFieldPw from "../components/textfield/TextFieldPw";
 
 import AuthContext from "../contexts/AuthContext";
 
+import { useLocalStorage } from "../hooks/useLocalStorage";
+
 import axiosClient from "../services/api";
 
 import { EMAIL_REGEX } from "../constants/regex";
 
 import google from "./../assets/google.png";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const signinSchema = z.object({
   email: z.string().nonempty().regex(EMAIL_REGEX, "올바른 이메일 형식을 입력해주세요."),
@@ -94,6 +95,9 @@ const Login = () => {
         <button
           type="button"
           className="relative w-full h-12 border-[1px] border-white rounded-[8px]"
+          onClick={() => {
+            window.location.href = "http://localhost:8000/v1/auth/google/login";
+          }}
         >
           <img src={google} alt="" className="absolute top-1/2 left-4 -translate-y-1/2 w-6 h-6" />
           구글 로그인

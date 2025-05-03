@@ -10,6 +10,7 @@ import Landing from "./pages/Landing";
 import ProtectedRoute from "./route/ProtectedRoute";
 
 import "./App.css";
+import GoogleLoginRedirect from "./pages/GoogleLoginRedirect";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "signup",
         element: <Signup />,
+      },
+      {
+        path: "v1/auth/google/callback",
+        element: <GoogleLoginRedirect />,
       },
       {
         element: <ProtectedRoute />,
