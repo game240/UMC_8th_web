@@ -1,0 +1,8 @@
+- React Form Hook: React에서 form의 state를 효율적이고 간결하게 관리할 수 있게 도와주는 라이브러리
+  - 최소한의 코드로 form의 state와 유효성 검증 기능 구현 가능
+    - required, min/maxLength, regex 등의 기능 내장
+    - 외부 라이브러리 연동 가능
+  - 해당 input field만 re-rendering (기존: 전체 re-rendering)
+- Zod: TS type 스키마 선언 및 데이터 검증 라이브러리
+  - 스키마로부터 자동으로 TS type 추론
+  - 기존 TS에서 불가능한 runtime type 검증 가능
