@@ -1,5 +1,9 @@
 import { useNavigate } from "react-router-dom";
+
 import SideBarBtn from "./SideBarBtn";
+
+import SearchIcon from "@mui/icons-material/Search";
+import PersonIcon from "@mui/icons-material/Person";
 
 const SideBar = ({ ...props }) => {
   const navigate = useNavigate();
@@ -10,16 +14,20 @@ const SideBar = ({ ...props }) => {
     >
       <div>
         <SideBarBtn></SideBarBtn>
-        <SideBarBtn>찾기</SideBarBtn>
+        <SideBarBtn>
+          <SearchIcon sx={{ color: "white" }} />
+          찾기
+        </SideBarBtn>
         <SideBarBtn
           onClick={() => {
             navigate("/mypage");
           }}
         >
+          <PersonIcon sx={{ color: "white" }} />
           마이페이지
         </SideBarBtn>
       </div>
-      <SideBarBtn>탈퇴하기</SideBarBtn>
+      <SideBarBtn className="flex justify-center">탈퇴하기</SideBarBtn>
     </aside>
   );
 };

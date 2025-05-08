@@ -1,22 +1,32 @@
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import AuthContext from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+
+import { useLocalStorage } from "../hooks/useLocalStorage";
+
+import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
 
 const NavBar = () => {
   const { isAuthenticated, signOut } = useContext(AuthContext)!;
+  const { getItem: getName } = useLocalStorage("name");
   const navigate = useNavigate();
 
   return (
-    <nav className="flex justify-between items-center relative px-8 w-full h-16 bg-[#111] z-1">
-      <div className="relative">
-        <p className="text-3xl text-pink-500 font-extrabold">DOLIGO</p>
+    <nav className="flex justify-between items-center relative px-4 w-full h-16 bg-[#111] z-1">
+      <div className="flex items-center gap-4">
+        <button>
+          <MenuIcon sx={{ color: "white", fontSize: 30 }} />
+        </button>
         <button
-          className="absolute top-0 left-0 size-full"
+          className="size-full"
           onClick={() => {
             navigate("/");
           }}
-        ></button>
+        >
+          <p className="text-3xl text-pink-500 font-extrabold">DOLIGO</p>
+        </button>
       </div>
       <div className="flex gap-4">
         {!isAuthenticated ? (
@@ -37,7 +47,11 @@ const NavBar = () => {
             </button>
           </>
         ) : (
-          <>
+          <div className="flex items-center gap-4">
+            <button>
+              <SearchIcon sx={{ color: "white" }} />
+            </button>
+            <p>{getName()}님 반갑습니다.</p>
             <button
               className="w-[80px] h-[36px] rounded-[8px] text-white bg-black"
               onClick={() => {
@@ -47,7 +61,7 @@ const NavBar = () => {
             >
               로그아웃
             </button>
-          </>
+          </div>
         )}
       </div>
     </nav>
