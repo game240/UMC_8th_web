@@ -1,7 +1,6 @@
-import { Outlet } from "react-router-dom";
-
 import NavBar from "../components/NavBar";
 import SideBar from "../components/sidebar/SideBar";
+import PaddingLayout from "./PaddingLayout";
 
 const DefaultLayout = () => {
   return (
@@ -10,7 +9,7 @@ const DefaultLayout = () => {
         <NavBar />
         <div className="flex">
           <SideBar />
-          <Outlet />
+          <PaddingLayout />
         </div>
       </div>
     </div>
