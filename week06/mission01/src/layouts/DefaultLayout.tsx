@@ -1,13 +1,17 @@
 import { Outlet } from "react-router-dom";
 
 import NavBar from "../components/NavBar";
+import SideBar from "../components/sidebar/SideBar";
 
 const DefaultLayout = () => {
   return (
-    <div className="bg-black w-full flex flex-col items-center">
-      <div className="w-full min-h-screen">
+    <div className="flex flex-col items-center w-screen min-h-screen bg-black ">
+      <div className="w-full h-full">
         <NavBar />
-        <Outlet />
+        <div className="flex">
+          <SideBar />
+          <Outlet />
+        </div>
       </div>
     </div>
   );

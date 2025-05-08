@@ -8,9 +8,9 @@ const NavBar = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="flex justify-between items-center px-8 w-full h-16 bg-[#111]">
+    <nav className="flex justify-between items-center relative px-8 w-full h-16 bg-[#111] z-1">
       <div className="relative">
-        <p className="text-3xl text-rose-900 font-extrabold">돌려돌려 LP판</p>
+        <p className="text-3xl text-pink-500 font-extrabold">DOLIGO</p>
         <button
           className="absolute top-0 left-0 size-full"
           onClick={() => {
@@ -30,7 +30,7 @@ const NavBar = () => {
               로그인
             </button>
             <button
-              className="w-[80px] h-[36px] rounded-[8px] text-white bg-rose-900"
+              className="w-[80px] h-[36px] rounded-[8px] text-white bg-pink-500"
               onClick={() => navigate("/signup")}
             >
               회원가입
@@ -40,14 +40,6 @@ const NavBar = () => {
           <>
             <button
               className="w-[80px] h-[36px] rounded-[8px] text-white bg-black"
-              onClick={() => {
-                navigate("/mypage");
-              }}
-            >
-              마이페이지
-            </button>
-            <button
-              className="w-[80px] h-[36px] rounded-[8px] text-white bg-rose-900"
               onClick={() => {
                 navigate("/");
                 signOut();

@@ -13,3 +13,7 @@
     @apply text-white;
   }
 }
+
+body {
+  overflow-x: hidden;
+}
