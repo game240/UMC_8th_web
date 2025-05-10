@@ -1,6 +1,9 @@
 @import "tailwindcss";
+@import "./styles/transition.tailwind.css";
 
 @tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   h1,
