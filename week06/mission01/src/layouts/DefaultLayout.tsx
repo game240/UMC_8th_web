@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 
 import PaddingLayout from "./PaddingLayout";
 
@@ -9,12 +9,22 @@ import SideBar from "../components/sidebar/SideBar";
 import SideBarContext from "../contexts/SideBarContext";
 
 import useWindowWidth from "../hooks/useWindowWidth";
+import useOutsideClick from "../hooks/useOutsideClick";
 
 const DefaultLayout = () => {
-  const { isSideBarOpen } = useContext(SideBarContext)!;
+  const { isSideBarOpen, setIsSideBarOpen } = useContext(SideBarContext)!;
   const { xxl } = useWindowWidth();
 
   const zIndex = xxl ? "-z-10" : "z-20";
+
+  const sideBarRef = useRef<HTMLDivElement>(null);
+  const { isOutside } = useOutsideClick({ ref: sideBarRef });
+
+  useEffect(() => {
+    if (isOutside && isSideBarOpen && !xxl) {
+      setIsSideBarOpen(false);
+    }
+  }, [isOutside, isSideBarOpen, setIsSideBarOpen, xxl]);
 
   return (
     <div className="flex flex-col items-center w-screen bg-black ">
@@ -27,7 +37,7 @@ const DefaultLayout = () => {
               isSideBarOpen ? clsx("opacity-50", zIndex) : "opacity-0 -z-10"
             )}
           ></div>
-          <SideBar />
+          <SideBar ref={sideBarRef} />
           <PaddingLayout />
         </div>
       </div>

@@ -4,20 +4,20 @@ import { useNavigate } from "react-router-dom";
 
 import SideBarBtn from "./SideBarBtn";
 
-import SideBtnContext from "../../contexts/SideBtnContext";
+import SideBarContext from "../../contexts/SideBarContext";
 
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 
 const SideBar = ({ ...props }) => {
-  const { isSideBtnOpen } = useContext(SideBtnContext)!;
+  const { isSideBarOpen } = useContext(SideBarContext)!;
 
   const navigate = useNavigate();
   return (
     <aside
       className={clsx(
         "flex flex-col justify-between fixed w-48 h-full bg-[#111] transition-common z-30",
-        isSideBtnOpen ? "translate-x-0" : "-translate-x-full"
+        isSideBarOpen ? "translate-x-0" : "-translate-x-full"
       )}
       {...props}
     >
