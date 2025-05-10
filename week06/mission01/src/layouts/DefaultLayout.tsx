@@ -29,7 +29,7 @@ const DefaultLayout = () => {
   return (
     <div className="flex flex-col items-center w-screen bg-black ">
       <div className="w-full h-full">
-        <NavBar />
+        <NavBar ref={sideBarRef} />
         <div className="flex relative">
           <div
             className={clsx(

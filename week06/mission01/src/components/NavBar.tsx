@@ -9,14 +9,17 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 
-const NavBar = () => {
+const NavBar = ({ ...props }) => {
   const { isAuthenticated, signOut } = useContext(AuthContext)!;
   const { isSideBarOpen, setIsSideBarOpen } = useContext(SideBarContext)!;
   const { getItem: getName } = useLocalStorage("name");
   const navigate = useNavigate();
 
   return (
-    <nav className="flex justify-between items-center fixed px-4 w-full h-16 bg-[#111] z-40">
+    <nav
+      className="flex justify-between items-center fixed px-4 w-full h-16 bg-[#111] z-40"
+      {...props}
+    >
       <div className="flex items-center gap-4">
         <button
           onClick={() => {
