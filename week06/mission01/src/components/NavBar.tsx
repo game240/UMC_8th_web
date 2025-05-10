@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import AuthContext from "../contexts/AuthContext";
+import SideBtnContext from "../contexts/SideBtnContext.tsx";
 
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
@@ -10,13 +11,18 @@ import SearchIcon from "@mui/icons-material/Search";
 
 const NavBar = () => {
   const { isAuthenticated, signOut } = useContext(AuthContext)!;
+  const { isSideBtnOpen, setIsSideBtnOpen } = useContext(SideBtnContext)!;
   const { getItem: getName } = useLocalStorage("name");
   const navigate = useNavigate();
 
   return (
-    <nav className="flex justify-between items-center relative px-4 w-full h-16 bg-[#111] z-1">
+    <nav className="flex justify-between items-center fixed px-4 w-full h-16 bg-[#111] z-40">
       <div className="flex items-center gap-4">
-        <button>
+        <button
+          onClick={() => {
+            setIsSideBtnOpen(!isSideBtnOpen);
+          }}
+        >
           <MenuIcon sx={{ color: "white", fontSize: 30 }} />
         </button>
         <button

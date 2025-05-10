@@ -9,12 +9,12 @@ interface ItemThumbnailProps {
 const ItemThumbnail: React.FC<ItemThumbnailProps> = ({ lp }) => {
   return (
     <button
-      className="group flex flex-col justify-end relative p-4 w-full bg-white aspect-square bg-cover bg-no-repeat bg-center hover:scale-110 transition-transform duration-300 ease-in-out"
+      className="group flex flex-col justify-end relative p-4 w-full bg-white aspect-square bg-cover bg-no-repeat bg-center hover:scale-110 transition-common"
       style={{ backgroundImage: `url(${lp.thumbnail})` }}
     >
-      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-50 transition-opacity duration-300 ease-in-out"></div>
+      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-50 transition-common"></div>
 
-      <div className="text-left opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out z-10">
+      <div className="text-left opacity-0 group-hover:opacity-100 transition-common z-10">
         <h4 className="w-3/4 font-bold">{lp.title}</h4>
         <div className="flex justify-between">
           <p>{datesFromNow(lp.updatedAt)}</p>

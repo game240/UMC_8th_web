@@ -1,19 +1,28 @@
+import clsx from "clsx";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import SideBarBtn from "./SideBarBtn";
+
+import SideBtnContext from "../../contexts/SideBtnContext";
 
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 
 const SideBar = ({ ...props }) => {
+  const { isSideBtnOpen } = useContext(SideBtnContext)!;
+
   const navigate = useNavigate();
   return (
     <aside
-      className="flex flex-col justify-between fixed top-0 w-[10%] h-full bg-[#111]"
+      className={clsx(
+        "flex flex-col justify-between fixed w-48 h-full bg-[#111] transition-common z-30",
+        isSideBtnOpen ? "translate-x-0" : "-translate-x-full"
+      )}
       {...props}
     >
       <div>
-        <SideBarBtn></SideBarBtn>
+        <SideBarBtn />
         <SideBarBtn>
           <SearchIcon sx={{ color: "white" }} />
           찾기
@@ -27,7 +36,7 @@ const SideBar = ({ ...props }) => {
           마이페이지
         </SideBarBtn>
       </div>
-      <SideBarBtn className="flex justify-center">탈퇴하기</SideBarBtn>
+      <SideBarBtn className="flex justify-center ">탈퇴하기</SideBarBtn>
     </aside>
   );
 };
