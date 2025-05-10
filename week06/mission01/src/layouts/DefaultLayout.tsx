@@ -4,7 +4,7 @@ import PaddingLayout from "./PaddingLayout";
 
 const DefaultLayout = () => {
   return (
-    <div className="flex flex-col items-center w-screen min-h-screen bg-black ">
+    <div className="flex flex-col items-center w-screen bg-black ">
       <div className="w-full h-full">
         <NavBar />
         <div className="flex">
