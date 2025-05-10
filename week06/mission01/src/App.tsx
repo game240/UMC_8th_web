@@ -38,6 +38,7 @@ const router = createBrowserRouter([
             path: "mypage",
             element: <Mypage />,
           },
+          { path: "/lp/:id", element: <div></div> },
         ],
       },
     ],
