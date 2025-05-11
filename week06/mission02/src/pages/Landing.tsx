@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 import ItemThumbnail from "../components/landing/ItemThumbnail";
 import LandingSkeleton from "../components/landing/LandingSkeleton";
-import Toggle from "../components/landing/Toggle";
+import Toggle from "../components/Toggle";
 
 import axiosClient from "../services/api";
 
