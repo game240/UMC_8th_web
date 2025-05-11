@@ -33,7 +33,7 @@ const DefaultLayout = () => {
         <div className="flex relative">
           <div
             className={clsx(
-              "hidden xl:block absolute top-0 left-0 size-full bg-black transition-common ",
+              " absolute top-0 left-0 size-full bg-black transition-common ",
               isSideBarOpen ? clsx("opacity-50", zIndex) : "opacity-0 -z-10"
             )}
           ></div>
