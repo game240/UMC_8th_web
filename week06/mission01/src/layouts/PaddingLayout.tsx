@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 
 const PaddingLayout = () => {
   return (
-    <div className="pl-[10%] w-full min-h-screen">
+    <div className="pt-20 pl-[10%] w-full min-h-screen">
       <Outlet />
     </div>
   );
