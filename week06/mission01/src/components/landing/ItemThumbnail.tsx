@@ -14,7 +14,11 @@ const ItemThumbnail: React.FC<ItemThumbnailProps> = ({ lp }) => {
       className="group flex flex-col justify-end relative p-4 w-full bg-white aspect-square bg-cover bg-no-repeat bg-center hover:scale-110 transition-common"
       style={{ backgroundImage: `url(${lp.thumbnail})` }}
       onClick={() => {
-        navigate(`/lp/${lp.id}`);
+        navigate(`/lp/${lp.id}`, {
+          state: {
+            lp: lp,
+          },
+        });
       }}
     >
       <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-50 transition-common"></div>

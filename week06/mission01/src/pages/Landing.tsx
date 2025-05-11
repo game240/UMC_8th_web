@@ -31,7 +31,7 @@ const Landing = () => {
   }
 
   return (
-    <main className="flex flex-col gap-4 pt-20 px-[6%] size-full">
+    <main className="flex flex-col gap-4 px-[6%] size-full">
       <div className="flex justify-end w-full pr-[2%]">
         <Toggle />
       </div>

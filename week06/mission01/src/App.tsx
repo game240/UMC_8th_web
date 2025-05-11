@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Mypage from "./pages/Mypage";
 import Landing from "./pages/Landing";
+import LP from "./pages/LP";
 
 import ProtectedRoute from "./route/ProtectedRoute";
 
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
             path: "mypage",
             element: <Mypage />,
           },
-          { path: "/lp/:id", element: <div></div> },
+          { path: "/lp/:id", element: <LP /> },
         ],
       },
     ],
