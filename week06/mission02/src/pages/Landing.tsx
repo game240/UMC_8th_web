@@ -2,11 +2,14 @@ import { useInfiniteQuery, QueryFunctionContext } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 
 import ItemThumbnail from "../components/landing/ItemThumbnail";
+import LandingSkeleton from "../components/landing/LandingSkeleton";
 import Toggle from "../components/landing/Toggle";
 
 import axiosClient from "../services/api";
 
 import { Lp } from "../types/lp";
+
+import "./../../node_modules/react-loading-skeleton/dist/skeleton.css";
 
 interface LpPage {
   lps: Lp[];
@@ -54,7 +57,16 @@ const Landing = () => {
   }, [fetchNextPage, hasNextPage]);
 
   if (isLoading) {
-    return <div>로딩 중...</div>;
+    return (
+      <main className="px-[6%] size-full">
+        <section className="flex flex-col gap-4 mb-4">
+          <div className="flex justify-end w-full pr-[2%]">
+            <Toggle />
+          </div>
+        </section>
+        <LandingSkeleton />
+      </main>
+    );
   }
 
   if (isError) {
@@ -62,18 +74,19 @@ const Landing = () => {
   }
 
   return (
-    <main className="flex flex-col gap-4 px-[6%] size-full">
-      <div className="flex justify-end w-full pr-[2%]">
-        <Toggle />
-      </div>
+    <main className="px-[6%] size-full">
+      <section className="flex flex-col gap-4 mb-4">
+        <div className="flex justify-end w-full pr-[2%]">
+          <Toggle />
+        </div>
+      </section>
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
         {data?.pages.map((page) => page.lps.map((lp) => <ItemThumbnail key={lp.id} lp={lp} />))}
       </section>
 
-      <div ref={loadMoreRef} className="h-1">
-        {isFetchingNextPage && <p>로딩중...</p>}
-        {!hasNextPage && <p>마지막 페이지입니다.</p>}
-      </div>
+      <div ref={loadMoreRef} className="h-1"></div>
+      {isFetchingNextPage && <LandingSkeleton />}
+      {!hasNextPage && <p>마지막 페이지입니다.</p>}
     </main>
   );
 };
