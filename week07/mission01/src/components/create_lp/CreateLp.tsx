@@ -1,8 +1,14 @@
+import { useMutation } from "@tanstack/react-query";
 import CloseIcon from "@mui/icons-material/Close";
+import { useCallback, useState, useEffect } from "react";
+import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-import lp from "./../../assets/lp.png";
+
 import CreateLpTag from "./CreateLpTag";
+
+import axiosClient from "../../services/api";
+
+import lp from "./../../assets/lp.png";
 
 interface CreateLpProps {
   openDialog: boolean;
@@ -12,15 +18,75 @@ interface CreateLpProps {
 interface FormInputs {
   lpName: string;
   lpContent: string;
+  lpTag: string;
+}
+
+interface CreateLpRequest {
+  title: string;
+  content: string;
+  thumbnail: string;
+  tags: string[];
+  published: boolean;
 }
 
 const CreateLp: React.FC<CreateLpProps> = ({ openDialog, setOpenDialog }) => {
   const [tags, setTags] = useState<string[]>([]);
   const { register, handleSubmit, watch, setValue } = useForm<FormInputs>();
 
+  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
+
+  const createLpMutation = useMutation({
+    mutationFn: async (data: CreateLpRequest) => {
+      const response = await axiosClient.post("/v1/lps", data);
+      return response.data;
+    },
+    onSuccess: () => {
+      setOpenDialog(false);
+      alert("LP 생성 성공");
+    },
+    onError: (error) => {
+      alert("LP 생성 실패:" + error);
+    },
+  });
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+
+    if (!file.type.startsWith("image/")) {
+      alert("이미지 파일만 업로드할 수 있습니다.");
+      return;
+    }
+
+    const fileUrl = URL.createObjectURL(file);
+    setUploadedFileUrl(fileUrl);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (uploadedFileUrl) {
+        URL.revokeObjectURL(uploadedFileUrl);
+      }
+    };
+  }, [uploadedFileUrl]);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: {
+      "image/*": [".png", ".jpg", ".jpeg", ".gif"],
+    },
+    multiple: false,
+  });
+
   const onCreateLp = (data: FormInputs) => {
-    console.log(data);
-    // 여기에 LP 추가 로직 구현
+    const lpData: CreateLpRequest = {
+      title: data.lpName,
+      content: data.lpContent,
+      thumbnail: uploadedFileUrl || "",
+      tags: tags,
+      published: true,
+    };
+
+    createLpMutation.mutate(lpData);
   };
 
   return (
@@ -35,8 +101,21 @@ const CreateLp: React.FC<CreateLpProps> = ({ openDialog, setOpenDialog }) => {
         </button>
       </div>
       <div className="flex justify-center items-center">
-        <div className="w-1/2 aspect-square">
-          <img src={lp} alt="lp" />
+        <div className="relative w-1/2 aspect-square">
+          <img
+            src={uploadedFileUrl || lp}
+            alt="lp"
+            className="w-full h-full object-cover rounded-full"
+          />
+          {uploadedFileUrl && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[25%] bg-white border-1 border-black rounded-full"></div>
+          )}
+          <div
+            {...getRootProps()}
+            className="absolute top-0 left-0 w-full h-full rounded-full cursor-pointer"
+          >
+            <input {...getInputProps()} />
+          </div>
         </div>
       </div>
 
