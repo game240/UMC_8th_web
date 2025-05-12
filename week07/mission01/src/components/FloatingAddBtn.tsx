@@ -2,7 +2,7 @@ import Dialog from "@mui/material/Dialog";
 import clsx from "clsx";
 import { useState } from "react";
 
-import CreateLp from "./CreateLp";
+import CreateLp from "./create_lp/CreateLp";
 
 import AddIcon from "@mui/icons-material/Add";
 

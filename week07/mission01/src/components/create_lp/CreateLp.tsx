@@ -1,7 +1,8 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { useForm } from "react-hook-form";
-
-import lp from "../assets/lp.png";
+import { useState } from "react";
+import lp from "./../../assets/lp.png";
+import CreateLpTag from "./CreateLpTag";
 
 interface CreateLpProps {
   openDialog: boolean;
@@ -14,9 +15,10 @@ interface FormInputs {
 }
 
 const CreateLp: React.FC<CreateLpProps> = ({ openDialog, setOpenDialog }) => {
-  const { register, handleSubmit, watch } = useForm<FormInputs>();
+  const [tags, setTags] = useState<string[]>([]);
+  const { register, handleSubmit, watch, setValue } = useForm<FormInputs>();
 
-  const onSubmit = (data: FormInputs) => {
+  const onCreateLp = (data: FormInputs) => {
     console.log(data);
     // 여기에 LP 추가 로직 구현
   };
@@ -38,7 +40,7 @@ const CreateLp: React.FC<CreateLpProps> = ({ openDialog, setOpenDialog }) => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-4 mt-16">
+      <form onSubmit={handleSubmit(onCreateLp)} className="flex flex-col items-center gap-4 mt-16">
         <div className="flex flex-col items-center gap-4 w-[80%]">
           <input
             className="px-2 w-full h-12 border-1 border-solid border-gray-400 text-white rounded-[6px]"
@@ -52,17 +54,42 @@ const CreateLp: React.FC<CreateLpProps> = ({ openDialog, setOpenDialog }) => {
             {...register("lpContent")}
           />
 
-          <div className="flex gap-2 w-full">
-            <input
-              className="flex-1 px-2 h-12 border-1 border-solid border-gray-400 text-white rounded-[6px]"
-              placeholder="LP Tag"
-            />
-            <button
-              type="button"
-              className="px-6 py-1 rounded-[10px] text-white bg-pink-500 disabled:bg-gray-400"
-            >
-              Add
-            </button>
+          <div className="flex flex-col gap-2 w-full">
+            <div className="flex gap-2">
+              <input
+                className="flex-1 px-2 h-12 border-1 border-solid border-gray-400 text-white rounded-[6px]"
+                placeholder="LP Tag"
+                {...register("lpTag")}
+              />
+              <button
+                type="button"
+                className="px-6 py-1 rounded-[10px] text-white bg-pink-500 disabled:bg-gray-400"
+                disabled={!watch("lpTag")}
+                onClick={() => {
+                  const tag = watch("lpTag");
+                  if (tag) {
+                    if (!tags.includes(tag)) {
+                      setTags([...tags, tag]);
+                      setValue("lpTag", "");
+                    }
+                  }
+                }}
+              >
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <CreateLpTag
+                  key={tag}
+                  onRemove={() => {
+                    setTags(tags.filter((t) => t !== tag));
+                  }}
+                >
+                  {tag}
+                </CreateLpTag>
+              ))}
+            </div>
           </div>
 
           <button
