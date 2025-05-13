@@ -4,9 +4,16 @@ import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 interface LpCommentOptionProps {
   className?: string;
   isAuthor: boolean;
+  isEdit: boolean;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const LpCommentOption: React.FC<LpCommentOptionProps> = ({ className, isAuthor }) => {
+const LpCommentOption: React.FC<LpCommentOptionProps> = ({
+  className,
+  isAuthor,
+  // isEdit,
+  setIsEdit,
+}) => {
   if (!isAuthor) {
     return null;
   }
@@ -14,7 +21,12 @@ const LpCommentOption: React.FC<LpCommentOptionProps> = ({ className, isAuthor }
   return (
     <div className={`absolute -bottom-full -right-full bg-black z-10 ${className}`}>
       <div className="flex">
-        <button className="cursor-pointer">
+        <button
+          className="cursor-pointer"
+          onClick={() => {
+            setIsEdit(true);
+          }}
+        >
           <EditOutlinedIcon sx={{ color: "white" }} />
         </button>
         <button className="cursor-pointer">
