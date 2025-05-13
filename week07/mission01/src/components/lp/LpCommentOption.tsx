@@ -1,7 +1,16 @@
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 
-const LpCommentOption: React.FC<{ className?: string }> = ({ className }) => {
+interface LpCommentOptionProps {
+  className?: string;
+  isAuthor: boolean;
+}
+
+const LpCommentOption: React.FC<LpCommentOptionProps> = ({ className, isAuthor }) => {
+  if (!isAuthor) {
+    return null;
+  }
+
   return (
     <div className={`absolute -bottom-full -right-full bg-black z-10 ${className}`}>
       <div className="flex">

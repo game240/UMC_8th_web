@@ -4,22 +4,16 @@ import {
   useInfiniteQuery,
   useMutation,
 } from "@tanstack/react-query";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 
 import Toggle from "../Toggle";
 import LpCommentSkeleton from "./LpCommentSkeleton";
-import LpCommentOption from "./LpCommentOption";
-
-import useOutsideClick from "../../hooks/useOutsideClick";
-
-import { datesFromNow } from "../../utils/datesFromNow";
+import LpEachComment from "./LpEachComment";
 
 import axiosClient from "../../services/api";
 
 import { LpComment } from "../../types/lp";
-
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 interface CommentPage {
   comments: LpComment[];
@@ -36,18 +30,10 @@ interface LpCommentsProps {
 }
 
 const LpComments: React.FC<LpCommentsProps> = ({ lpId }) => {
-  const [openOptions, setOpenOptions] = useState<Record<number, boolean>>({});
-  const containerRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
-  const { isOutside } = useOutsideClick({ ref: containerRef as RefObject<HTMLElement> });
+
   const queryClient = useQueryClient();
   const { register, handleSubmit, watch, setValue } = useForm<CommentFormData>();
-
-  useEffect(() => {
-    if (isOutside) {
-      setOpenOptions({});
-    }
-  }, [isOutside]);
 
   const fetchComments = async ({ pageParam = 0 }: QueryFunctionContext) => {
     const { data } = await axiosClient.get(`/v1/lps/${lpId}/comments`, {
@@ -96,7 +82,7 @@ const LpComments: React.FC<LpCommentsProps> = ({ lpId }) => {
   }
 
   return (
-    <section className="flex flex-col gap-4" ref={containerRef}>
+    <section className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <p>댓글</p>
         <Toggle />
@@ -119,41 +105,7 @@ const LpComments: React.FC<LpCommentsProps> = ({ lpId }) => {
 
       <div className="space-y-4">
         {data?.pages.map((page) =>
-          page.comments.map((comment) => (
-            <div
-              key={comment.id}
-              className="flex justify-between items-center group"
-              onMouseLeave={() => {
-                setOpenOptions({});
-              }}
-            >
-              <div className="flex gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#111]"></div>
-                <div>
-                  <p className="font-semibold">{comment.author.name}</p>
-                  <p>{comment.content}</p>
-                  <p className="text-xs text-gray-400">{datesFromNow(comment.createdAt)}</p>
-                </div>
-              </div>
-              <div className="relative">
-                <button
-                  className="hidden group-hover:block"
-                  onClick={() => {
-                    setOpenOptions((options) => ({
-                      ...options,
-                      [comment.id]: !options[comment.id],
-                    }));
-                  }}
-                >
-                  <MoreVertIcon sx={{ color: "white" }} />
-                </button>
-
-                {openOptions[comment.id] && (
-                  <LpCommentOption className="hidden group-hover:block" />
-                )}
-              </div>
-            </div>
-          ))
+          page.comments.map((comment) => <LpEachComment key={comment.id} comment={comment} />)
         )}
 
         <div ref={loadMoreRef} className="h-1"></div>
