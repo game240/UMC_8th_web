@@ -1,6 +1,15 @@
+import {
+  useQueryClient,
+  QueryFunctionContext,
+  useInfiniteQuery,
+  useMutation,
+} from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 
 import Toggle from "../components/Toggle";
+import LpCommentSkeleton from "../components/lp/LpCommentSkeleton";
 
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
@@ -11,12 +20,7 @@ import { Lp, LpComment } from "../types/lp";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useEffect, useRef } from "react";
 import axiosClient from "../services/api";
-import { QueryFunctionContext, useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import LpCommentSkeleton from "../components/LpCommentSkeleton";
-import { useForm } from "react-hook-form";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface CommentPage {
   comments: LpComment[];
