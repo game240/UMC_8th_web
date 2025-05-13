@@ -13,8 +13,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useEffect, useRef } from "react";
 import axiosClient from "../services/api";
-import { QueryFunctionContext, useInfiniteQuery } from "@tanstack/react-query";
+import { QueryFunctionContext, useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import LpCommentSkeleton from "../components/LpCommentSkeleton";
+import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface CommentPage {
   comments: LpComment[];
@@ -22,11 +24,20 @@ interface CommentPage {
   hasNext: boolean;
 }
 
+interface CommentFormData {
+  comment: string;
+}
+
 const LP = () => {
   const { lp } = useLocation()?.state as { lp: Lp };
 
   const { getItem } = useLocalStorage("name");
 
+  const queryClient = useQueryClient();
+
+  const { register, handleSubmit, watch, setValue } = useForm<CommentFormData>();
+
+  // 댓글 로직
   const fetchComments = async (context: QueryFunctionContext) => {
     const { pageParam = 0 } = context;
     const { data } = await axiosClient.get(`/v1/lps/${lp.id}/comments`, {
@@ -39,6 +50,36 @@ const LP = () => {
     };
   };
 
+  const commentsMutation = useMutation({
+    mutationFn: async (data: CommentFormData) => {
+      const response = await axiosClient.post(
+        `/v1/lps/${lp.id}/comments`,
+        {
+          content: data.comment,
+        },
+        {
+          params: {
+            lpId: lp.id,
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      setValue("comment", "");
+      // 댓글 목록 새로고침
+      queryClient.invalidateQueries({ queryKey: ["lpComments"] });
+    },
+    onError: (error) => {
+      alert("댓글 작성 실패: " + error);
+    },
+  });
+
+  const onSubmitComment = (data: CommentFormData) => {
+    commentsMutation.mutate(data);
+  };
+
+  // 무한로딩
   const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery<CommentPage, Error>({
       queryKey: ["lpComments"],
@@ -127,13 +168,20 @@ const LP = () => {
             <p>댓글</p>
             <Toggle />
           </div>
-          <div className="flex gap-4">
+          <form onSubmit={handleSubmit(onSubmitComment)} className="flex gap-4">
             <input
               className="flex-1 px-2 border-1 border-solid border-gray-400 text-white rounded-[6px]"
               placeholder="댓글을 입력해주세요"
+              {...register("comment")}
             />
-            <button className="px-4 py-1 bg-gray-400 text-white rounded-[4px]">작성</button>
-          </div>
+            <button
+              className="px-4 py-1 bg-pink-500 text-white rounded-[4px] disabled:bg-gray-400"
+              type="submit"
+              disabled={!watch("comment")}
+            >
+              작성
+            </button>
+          </form>
           <div className="w-full">
             {data?.pages.map((page) =>
               page.comments.map((comment) => (
