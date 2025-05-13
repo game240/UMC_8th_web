@@ -1,146 +1,19 @@
-import {
-  useQueryClient,
-  QueryFunctionContext,
-  useInfiniteQuery,
-  useMutation,
-} from "@tanstack/react-query";
-import { RefObject, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 
-import Toggle from "../components/Toggle";
-import LpCommentSkeleton from "../components/lp/LpCommentSkeleton";
+import LpComments from "../components/lp/LpComments";
 
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 import { datesFromNow } from "../utils/datesFromNow";
 
-import { Lp, LpComment } from "../types/lp";
+import { Lp } from "../types/lp";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import axiosClient from "../services/api";
-import LpCommentOption from "../components/lp/LpCommentOption";
-import useOutsideClick from "../hooks/useOutsideClick";
-
-interface CommentPage {
-  comments: LpComment[];
-  nextCursor: number | null;
-  hasNext: boolean;
-}
-
-interface CommentFormData {
-  comment: string;
-}
 
 const LP = () => {
-  const [openCommentOptions, setOpenCommentOptions] = useState<Record<number, boolean>>({});
-  const commentsRef = useRef<HTMLDivElement>(null);
-
   const { lp } = useLocation()?.state as { lp: Lp };
-
   const { getItem } = useLocalStorage("name");
-
-  const queryClient = useQueryClient();
-  const { register, handleSubmit, watch, setValue } = useForm<CommentFormData>();
-
-  const { isOutside } = useOutsideClick({
-    ref: commentsRef as RefObject<HTMLElement>,
-  });
-
-  useEffect(() => {
-    if (isOutside) {
-      setOpenCommentOptions({});
-    }
-  }, [isOutside]);
-
-  // 댓글 로직
-  const fetchComments = async (context: QueryFunctionContext) => {
-    const { pageParam = 0 } = context;
-    const { data } = await axiosClient.get(`/v1/lps/${lp.id}/comments`, {
-      params: { cursor: pageParam, limit: 10 },
-    });
-    return {
-      comments: data.data.data,
-      nextCursor: data.data.nextCursor,
-      hasNext: data.data.hasNext,
-    };
-  };
-
-  const commentsMutation = useMutation({
-    mutationFn: async (data: CommentFormData) => {
-      const response = await axiosClient.post(
-        `/v1/lps/${lp.id}/comments`,
-        {
-          content: data.comment,
-        },
-        {
-          params: {
-            lpId: lp.id,
-          },
-        }
-      );
-      return response.data;
-    },
-    onSuccess: () => {
-      setValue("comment", "");
-      // 댓글 목록 새로고침
-      queryClient.invalidateQueries({ queryKey: ["lpComments"] });
-    },
-    onError: (error) => {
-      alert("댓글 작성 실패: " + error);
-    },
-  });
-
-  const onSubmitComment = (data: CommentFormData) => {
-    commentsMutation.mutate(data);
-  };
-
-  // 무한로딩
-  const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery<CommentPage, Error>({
-      queryKey: ["lpComments"],
-      queryFn: fetchComments,
-      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor! : undefined),
-      initialPageParam: 0,
-    });
-
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!loadMoreRef.current || !hasNextPage) {
-      return;
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        fetchNextPage();
-      }
-    });
-
-    observer.observe(loadMoreRef.current);
-    return () => {
-      observer.disconnect();
-    };
-  }, [fetchNextPage, hasNextPage]);
-
-  const toggleCommentOption = (commentId: number) => {
-    setOpenCommentOptions((prev) => ({
-      ...prev,
-      [commentId]: !prev[commentId],
-    }));
-  };
-
-  const handleMouseLeave = (commentId: number) => {
-    setOpenCommentOptions((prev) => ({
-      ...prev,
-      [commentId]: false,
-    }));
-  };
-
-  if (isError) {
-    return <div>에러 발생: {(error as Error).message}</div>;
-  }
 
   return (
     <main className="flex justify-center pt-4 size-full">
@@ -170,11 +43,11 @@ const LP = () => {
             className="flex-center w-1/2 aspect-square"
             style={{
               boxShadow: `
-              0 -4px 6px rgba(0,0,0,0.2),
-              4px  0 6px rgba(0,0,0,0.2),
-              0   12px 6px rgba(0,0,0,0.2),
-             -4px  0 6px rgba(0,0,0,0.2)
-            `,
+                0 -4px 6px rgba(0,0,0,0.2),
+                4px  0 6px rgba(0,0,0,0.2),
+                0   12px 6px rgba(0,0,0,0.2),
+               -4px  0 6px rgba(0,0,0,0.2)
+              `,
             }}
           >
             <div
@@ -192,64 +65,10 @@ const LP = () => {
         <p>{lp.content}</p>
 
         <p className="flex-center mt-4">
-          <p className="text-pink-500">♥</p> &nbsp;{lp.likes.length}
+          <span className="text-pink-500">♥</span> &nbsp;{lp.likes.length}
         </p>
 
-        <section className="flex flex-col gap-4">
-          <div className="flex justify-between">
-            <p>댓글</p>
-            <Toggle />
-          </div>
-          <form onSubmit={handleSubmit(onSubmitComment)} className="flex gap-4">
-            <input
-              className="flex-1 px-2 border-1 border-solid border-gray-400 text-white rounded-[6px]"
-              placeholder="댓글을 입력해주세요"
-              {...register("comment")}
-            />
-            <button
-              className="px-4 py-1 bg-pink-500 text-white rounded-[4px] disabled:bg-gray-400"
-              type="submit"
-              disabled={!watch("comment")}
-            >
-              작성
-            </button>
-          </form>
-          <div className="w-full" ref={commentsRef}>
-            {data?.pages.map((page) =>
-              page.comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="flex justify-between items-center gap-2 mb-4 group"
-                  onMouseLeave={() => {
-                    handleMouseLeave(comment.id);
-                  }}
-                >
-                  <div className="flex gap-2">
-                    <div className="size-8 rounded-full bg-[#111]"></div>
-                    <div>
-                      <p>{comment.author.name}</p>
-                      <p>{comment.content}</p>
-                    </div>
-                  </div>
-                  <div className="relative">
-                    <button
-                      className="hidden group-hover:block cursor-pointer"
-                      onClick={() => toggleCommentOption(comment.id)}
-                    >
-                      <MoreVertIcon sx={{ color: "white" }} />
-                    </button>
-                    {openCommentOptions[comment.id] && (
-                      <LpCommentOption className="hidden group-hover:block" />
-                    )}
-                  </div>
-                </div>
-              ))
-            )}
-            <div ref={loadMoreRef} className="h-1"></div>
-            {(isLoading || isFetchingNextPage) && <LpCommentSkeleton />}
-            {!hasNextPage && <p className="text-center text-gray-400">마지막 댓글입니다.</p>}
-          </div>
-        </section>
+        <LpComments lpId={lp.id} />
       </section>
     </main>
   );
