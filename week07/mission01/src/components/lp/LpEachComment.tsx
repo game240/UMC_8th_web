@@ -90,8 +90,8 @@ const LpEachComment: React.FC<LpEachCommentProps> = ({ comment }) => {
           {openOptions && (
             <LpCommentOption
               className="hidden group-hover:block"
+              comment={comment}
               isAuthor={comment.author.name === getItem()}
-              isEdit={isEdit}
               setIsEdit={setIsEdit}
             />
           )}
