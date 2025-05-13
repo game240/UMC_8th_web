@@ -4,7 +4,7 @@ import {
   useInfiniteQuery,
   useMutation,
 } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 
@@ -21,6 +21,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import axiosClient from "../services/api";
+import LpCommentOption from "../components/lp/LpCommentOption";
+import useOutsideClick from "../hooks/useOutsideClick";
 
 interface CommentPage {
   comments: LpComment[];
@@ -33,13 +35,25 @@ interface CommentFormData {
 }
 
 const LP = () => {
+  const [openCommentOptions, setOpenCommentOptions] = useState<Record<number, boolean>>({});
+  const commentsRef = useRef<HTMLDivElement>(null);
+
   const { lp } = useLocation()?.state as { lp: Lp };
 
   const { getItem } = useLocalStorage("name");
 
   const queryClient = useQueryClient();
-
   const { register, handleSubmit, watch, setValue } = useForm<CommentFormData>();
+
+  const { isOutside } = useOutsideClick({
+    ref: commentsRef as RefObject<HTMLElement>,
+  });
+
+  useEffect(() => {
+    if (isOutside) {
+      setOpenCommentOptions({});
+    }
+  }, [isOutside]);
 
   // 댓글 로직
   const fetchComments = async (context: QueryFunctionContext) => {
@@ -109,6 +123,20 @@ const LP = () => {
       observer.disconnect();
     };
   }, [fetchNextPage, hasNextPage]);
+
+  const toggleCommentOption = (commentId: number) => {
+    setOpenCommentOptions((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  const handleMouseLeave = (commentId: number) => {
+    setOpenCommentOptions((prev) => ({
+      ...prev,
+      [commentId]: false,
+    }));
+  };
 
   if (isError) {
     return <div>에러 발생: {(error as Error).message}</div>;
@@ -186,12 +214,15 @@ const LP = () => {
               작성
             </button>
           </form>
-          <div className="w-full">
+          <div className="w-full" ref={commentsRef}>
             {data?.pages.map((page) =>
               page.comments.map((comment) => (
                 <div
                   key={comment.id}
                   className="flex justify-between items-center gap-2 mb-4 group"
+                  onMouseLeave={() => {
+                    handleMouseLeave(comment.id);
+                  }}
                 >
                   <div className="flex gap-2">
                     <div className="size-8 rounded-full bg-[#111]"></div>
@@ -200,9 +231,17 @@ const LP = () => {
                       <p>{comment.content}</p>
                     </div>
                   </div>
-                  <button className="hidden group-hover:block">
-                    <MoreVertIcon sx={{ color: "white" }} />
-                  </button>
+                  <div className="relative">
+                    <button
+                      className="hidden group-hover:block cursor-pointer"
+                      onClick={() => toggleCommentOption(comment.id)}
+                    >
+                      <MoreVertIcon sx={{ color: "white" }} />
+                    </button>
+                    {openCommentOptions[comment.id] && (
+                      <LpCommentOption className="hidden group-hover:block" />
+                    )}
+                  </div>
                 </div>
               ))
             )}
