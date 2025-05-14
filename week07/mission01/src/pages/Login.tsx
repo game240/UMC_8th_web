@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
 
 import BottomBtn from "../components/BottomBtn";
 import TextField from "../components/textfield/TextField";
@@ -51,27 +52,30 @@ const Login = () => {
   });
   const { signIn } = useContext(AuthContext)!;
   const { setItem: setName } = useLocalStorage("name");
-
   const navigate = useNavigate();
 
-  const onSubmit = async (zData: SigninRequest) => {
-    try {
-      const { data } = await axiosClient.post<SigninResponse>("/v1/auth/signin", zData);
-
-      if (data) {
-        signIn(data.data.accessToken, data.data.refreshToken);
-        setName(data.data.name);
-      }
-
+  const loginMutation = useMutation({
+    mutationFn: async (data: SigninRequest) => {
+      const response = await axiosClient.post<SigninResponse>("/v1/auth/signin", data);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      signIn(data.data.accessToken, data.data.refreshToken);
+      setName(data.data.name);
       alert("로그인 성공!");
       navigate("/");
-    } catch (error) {
+    },
+    onError: (error) => {
       if (error instanceof AxiosError) {
         alert(error?.response?.data.message);
       } else {
         alert("로그인에 실패했습니다.");
       }
-    }
+    },
+  });
+
+  const onSubmit = (zData: SigninRequest) => {
+    loginMutation.mutate(zData);
   };
 
   return (
