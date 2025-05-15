@@ -1,10 +1,12 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 import AuthContext from "../contexts/AuthContext.tsx";
 import SideBarContext from "../contexts/SideBarContext.tsx";
 
 import { useLocalStorage } from "../hooks/useLocalStorage.tsx";
+import axiosClient from "../services/api";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
@@ -14,6 +16,17 @@ const NavBar = ({ ...props }) => {
   const { isSideBarOpen, setIsSideBarOpen } = useContext(SideBarContext)!;
   const { getItem: getName } = useLocalStorage("name");
   const navigate = useNavigate();
+
+  const { data: userData } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const response = await axiosClient.get("/v1/users/me");
+      return response.data;
+    },
+    enabled: isAuthenticated,
+  });
+
+  const displayName = userData?.data?.name || getName();
 
   return (
     <nav
@@ -60,7 +73,7 @@ const NavBar = ({ ...props }) => {
             <button>
               <SearchIcon sx={{ color: "white" }} />
             </button>
-            <p>{getName()}님 반갑습니다.</p>
+            <p>{displayName}님 반갑습니다.</p>
             <button
               className="w-[80px] h-[36px] rounded-[8px] text-white bg-black"
               onClick={() => {

@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { useEffect, useState, useCallback } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
@@ -29,7 +29,16 @@ const Mypage = () => {
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null);
   const [isEdit, setIsEdit] = useState(false);
 
+  const queryClient = useQueryClient();
   const { getItem: getName, setItem: setName } = useLocalStorage("name");
+
+  const { data: userData } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const response = await axiosClient.get<GetUserResponse>("/v1/users/me");
+      return response.data;
+    },
+  });
 
   const {
     register,
@@ -49,18 +58,37 @@ const Mypage = () => {
       const response = await axiosClient.patch("/v1/users", data);
       return response.data;
     },
-    onSuccess: (data) => {
-      setName(data.data.name);
-      setBio(data.data.bio || "");
-      setEmail(data.data.email || "");
-      setAvatar(data.data.avatar || "");
+    onMutate: async (newData) => {
+      await queryClient.cancelQueries({ queryKey: ["user"] });
+      const previousData = queryClient.getQueryData(["user"]);
+
+      queryClient.setQueryData(["user"], (old: GetUserResponse | undefined) => ({
+        ...old,
+        data: {
+          ...old?.data,
+          name: newData.name,
+          bio: newData.bio,
+          avatar: newData.avatar,
+        },
+      }));
+
+      setName(newData.name);
+      setBio(newData.bio || "");
+      setAvatar(newData.avatar || "");
       setIsEdit(false);
-      alert("프로필이 성공적으로 업데이트되었습니다.");
+
+      return { previousData };
     },
-    onError: (error) => {
+    onError: (error, newData, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(["user"], context.previousData);
+      }
       if (error instanceof AxiosError) {
         alert(error?.response?.data.message || "프로필 업데이트에 실패했습니다.");
       }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
 
@@ -88,24 +116,13 @@ const Mypage = () => {
   }, [uploadedAvatar]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axiosClient.get<GetUserResponse>("/v1/users/me");
-        setName(data.data.name);
-        setBio(data.data.bio || "");
-        setEmail(data.data.email || "");
-        setAvatar(data.data.avatar || "");
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          alert(error?.response?.data.message);
-        } else {
-          alert("내 정보 조회에 실패했습니다.");
-        }
-      }
-    };
-
-    fetchData();
-  }, [setName]);
+    if (userData) {
+      setName(userData.data.name);
+      setBio(userData.data.bio || "");
+      setEmail(userData.data.email || "");
+      setAvatar(userData.data.avatar || "");
+    }
+  }, [userData, setName]);
 
   const handleUpdateProfile = (data: UpdateUserRequest) => {
     setIsEdit(!isEdit);
