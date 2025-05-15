@@ -5,9 +5,10 @@ import { datesFromNow } from "../../utils/datesFromNow";
 
 interface ItemThumbnailProps {
   lp: Lp;
+  isLiked: boolean;
 }
 
-const ItemThumbnail: React.FC<ItemThumbnailProps> = ({ lp }) => {
+const ItemThumbnail: React.FC<ItemThumbnailProps> = ({ lp, isLiked }) => {
   const navigate = useNavigate();
   return (
     <button
@@ -17,6 +18,7 @@ const ItemThumbnail: React.FC<ItemThumbnailProps> = ({ lp }) => {
         navigate(`/lp/${lp.id}`, {
           state: {
             lp: lp,
+            isLiked: isLiked,
           },
         });
       }}

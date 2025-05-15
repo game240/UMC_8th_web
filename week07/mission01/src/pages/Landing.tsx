@@ -1,4 +1,4 @@
-import { useInfiniteQuery, QueryFunctionContext } from "@tanstack/react-query";
+import { useInfiniteQuery, QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 
 import ItemThumbnail from "../components/landing/ItemThumbnail";
@@ -10,6 +10,7 @@ import axiosClient from "../services/api";
 import { Lp } from "../types/lp";
 
 import "./../../node_modules/react-loading-skeleton/dist/skeleton.css";
+import { User } from "../types/user";
 
 interface LpPage {
   lps: Lp[];
@@ -18,6 +19,14 @@ interface LpPage {
 }
 
 const Landing = () => {
+  const { data: userData } = useQuery<User>({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const { data } = await axiosClient.get("/v1/users/me");
+      return data.data;
+    },
+  });
+
   const fetchLps = async (context: QueryFunctionContext) => {
     const { pageParam = 0 } = context;
     const { data } = await axiosClient.get("/v1/lps", {
@@ -81,7 +90,15 @@ const Landing = () => {
         </div>
       </section>
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-        {data?.pages.map((page) => page.lps.map((lp) => <ItemThumbnail key={lp.id} lp={lp} />))}
+        {data?.pages.map((page) =>
+          page.lps.map((lp) => (
+            <ItemThumbnail
+              key={lp.id}
+              lp={lp}
+              isLiked={lp.likes.some((like) => like.userId === userData?.id)}
+            />
+          ))
+        )}
       </section>
 
       <div ref={loadMoreRef} className="h-1"></div>

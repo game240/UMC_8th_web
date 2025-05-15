@@ -10,7 +10,7 @@ export interface Lp {
   createdAt: string;
   updatedAt: string;
   tags: { id: number; name: string }[];
-  likes: [];
+  likes: { id: number; userId: number; lpId: number }[];
 }
 
 export interface LpComment {

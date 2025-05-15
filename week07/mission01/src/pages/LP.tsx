@@ -28,11 +28,10 @@ interface UpdateLpRequest {
 
 const LP = () => {
   const [isEdit, setIsEdit] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
   const navigate = useNavigate();
-  const { lp } = useLocation()?.state as { lp: Lp };
+  const { lp, isLiked } = useLocation()?.state as { lp: Lp; isLiked: boolean };
   const { getItem } = useLocalStorage("name");
 
   useEffect(() => {
@@ -90,6 +89,24 @@ const LP = () => {
     },
   });
 
+  const toggleLikeMutation = useMutation({
+    mutationFn: async () => {
+      const response = isLiked
+        ? await axiosClient.delete(`/v1/lps/${lp.id}/likes`)
+        : await axiosClient.post(`/v1/lps/${lp.id}/likes`);
+      return response.data;
+    },
+    onSuccess: () => {
+      setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+      window.location.reload();
+    },
+    onError: (error) => {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message || "좋아요 처리에 실패했습니다.");
+      }
+    },
+  });
+
   const onSubmit = (data: Pick<UpdateLpRequest, "title" | "content">) => {
     const basePayload = {
       title: data.title,
@@ -114,22 +131,8 @@ const LP = () => {
     }
   };
 
-  const onClickLike = async () => {
-    try {
-      if (!isLiked) {
-        await axiosClient.post(`/v1/lps/${lp.id}/likes`);
-        setIsLiked(true);
-        setLikeCount(likeCount + 1);
-      } else {
-        await axiosClient.delete(`/v1/lps/${lp.id}/likes`);
-        setIsLiked(false);
-        setLikeCount(likeCount - 1);
-      }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        alert(error.response?.data.message || "좋아요 처리에 실패했습니다.");
-      }
-    }
+  const onClickLike = () => {
+    toggleLikeMutation.mutate();
   };
 
   return (
