@@ -9,7 +9,7 @@ export interface Lp {
   authorId: number;
   createdAt: string;
   updatedAt: string;
-  tags: [];
+  tags: { id: number; name: string }[];
   likes: [];
 }
 
