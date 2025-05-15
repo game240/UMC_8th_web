@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import SideBarBtn from "./SideBarBtn";
@@ -8,8 +8,10 @@ import SideBarContext from "../../contexts/SideBarContext";
 
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
+import WithdrawalModal from "../WithdrawallModal";
 
 const SideBar = ({ ...props }) => {
+  const [modalOpen, setModalOpen] = useState(false);
   const { isSideBarOpen } = useContext(SideBarContext)!;
 
   const navigate = useNavigate();
@@ -36,7 +38,20 @@ const SideBar = ({ ...props }) => {
           마이페이지
         </SideBarBtn>
       </div>
-      <SideBarBtn className="flex justify-center ">탈퇴하기</SideBarBtn>
+      <SideBarBtn
+        className="flex justify-center"
+        onClick={() => {
+          setModalOpen(!modalOpen);
+        }}
+      >
+        탈퇴하기
+      </SideBarBtn>
+      <WithdrawalModal
+        open={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+        }}
+      />
     </aside>
   );
 };
