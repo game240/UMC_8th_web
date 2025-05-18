@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -13,6 +14,7 @@ import { datesFromNow } from "../utils/datesFromNow";
 import axiosClient from "../services/api";
 
 import { Lp } from "../types/lp";
+import { User } from "../types/user";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -26,13 +28,39 @@ interface UpdateLpRequest {
   published: boolean;
 }
 
+interface ApiResponse<T> {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data: T;
+}
+
 const LP = () => {
+  const queryClient = useQueryClient();
   const [isEdit, setIsEdit] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
 
   const navigate = useNavigate();
-  const { lp, isLiked } = useLocation()?.state as { lp: Lp; isLiked: boolean };
+  const { lp } = useLocation()?.state as { lp: Lp };
   const { getItem } = useLocalStorage("name");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const response = await axiosClient.get<ApiResponse<User>>("/v1/users/me");
+      const user = response.data.data;
+      setUser(user);
+    };
+    fetchUser();
+  }, []);
+
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (user) {
+      setIsLiked(lp.likes.some((like) => like.id === user.id));
+    }
+  }, [lp.likes, user]);
 
   useEffect(() => {
     setLikeCount(lp.likes.length);
@@ -98,7 +126,9 @@ const LP = () => {
     },
     onSuccess: () => {
       setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
-      window.location.reload();
+      setIsLiked((prev) => !prev);
+      // Landing 목록 invalidate (refetch)
+      queryClient.invalidateQueries();
     },
     onError: (error) => {
       if (error instanceof AxiosError) {
