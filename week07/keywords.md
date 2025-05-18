@@ -1,0 +1,12 @@
+- <span style="color: #EB5757">`useMutation`</span>
+  - <span style="color: #EB5757">`React Query(@tanstack/react-query)`</span>에서 제공하는 hook
+  - <span style="color: #EB5757">`POST`</span>, <span style="color: #EB5757">`PUT`</span>, <span style="color: #EB5757">`PATCH`</span>, <span style="color: #EB5757">`DELETE`</span> 등 주로 데이터를 생성, 수정, 삭제하는 `mutation` 작업 수행 시 사용
+  - 로딩, 성공, 에러 상태 내장 - 별도 state 관리 필요 없음
+    - 에러 발생 시 자동 재시도 기능 존재
+  - 특정 작업 성공 후 관련된 쿼리를 무효화, 최신 데이터를 반영 가능
+  - `Optimistic Update` 기능 탑재
+ 
+- `Optimistic Update`
+  - 서버의 응답을 기다리지 않고, 클라이언트 측에서 미리 UI를 업데이트하는 기법
+  - 해당 요청이 성공할 것이라 가정, user의 행동에 따른 변화를 서버의 실제 응답과 관계없이 바로 UI에 반영
+    - 만약 서버 요청이 실패하면, 미리 업데이트한 UI 상태를 이전 상태로 되돌림
