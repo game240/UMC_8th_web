@@ -1,5 +1,10 @@
-import { useInfiniteQuery, QueryFunctionContext, useQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  QueryFunctionContext,
+  useQuery,
+} from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import ItemThumbnail from "../components/landing/ItemThumbnail";
 import LandingSkeleton from "../components/landing/LandingSkeleton";
@@ -8,9 +13,9 @@ import Toggle from "../components/Toggle";
 import axiosClient from "../services/api";
 
 import { Lp } from "../types/lp";
+import { User } from "../types/user";
 
 import "./../../node_modules/react-loading-skeleton/dist/skeleton.css";
-import { User } from "../types/user";
 
 interface LpPage {
   lps: Lp[];
@@ -19,6 +24,10 @@ interface LpPage {
 }
 
 const Landing = () => {
+  // NavBar에서 넘어온 text
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search") ?? "";
+
   const { data: userData } = useQuery<User>({
     queryKey: ["user"],
     queryFn: async () => {
@@ -30,7 +39,7 @@ const Landing = () => {
   const fetchLps = async (context: QueryFunctionContext) => {
     const { pageParam = 0 } = context;
     const { data } = await axiosClient.get("/v1/lps", {
-      params: { cursor: pageParam, limit: 10 },
+      params: { cursor: pageParam, limit: 10, search },
     });
     return {
       lps: data.data.data,
@@ -39,13 +48,21 @@ const Landing = () => {
     };
   };
 
-  const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery<LpPage, Error>({
-      queryKey: ["lps"],
-      queryFn: fetchLps,
-      getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.nextCursor! : undefined),
-      initialPageParam: 0,
-    });
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<LpPage, Error>({
+    queryKey: ["lps", search], // search가 변경되면 캐시 초기화
+    queryFn: fetchLps,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasNext ? lastPage.nextCursor! : undefined,
+    initialPageParam: 0,
+  });
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
