@@ -12,6 +12,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 
 import useOutsideClick from "../hooks/useOutsideClick";
+import useDebounce from "../hooks/useDebounce";
 
 const NavBar = ({ ...props }) => {
   const [searchInput, setSearchInput] = useState("");
@@ -21,13 +22,6 @@ const NavBar = ({ ...props }) => {
   const { isSideBarOpen, setIsSideBarOpen } = useContext(SideBarContext)!;
   const { getItem: getName } = useLocalStorage("name");
   const navigate = useNavigate();
-
-  const searchRef = useRef<HTMLInputElement>(null);
-  const searchResultRef = useRef<HTMLDivElement | null>(null);
-  const { isOutside } = useOutsideClick({
-    ref: searchRef,
-    additionalRefs: [searchResultRef],
-  });
 
   const { data: userData } = useQuery({
     queryKey: ["user"],
@@ -39,6 +33,19 @@ const NavBar = ({ ...props }) => {
   });
 
   const displayName = userData?.data?.name || getName();
+
+  const searchRef = useRef<HTMLInputElement>(null);
+  const searchResultRef = useRef<HTMLDivElement | null>(null);
+  const { isOutside } = useOutsideClick({
+    ref: searchRef,
+    additionalRefs: [searchResultRef],
+  });
+
+  const debouncedSearchInput = useDebounce(searchInput, 500);
+
+  useEffect(() => {
+    navigate(`/?search=${encodeURIComponent(debouncedSearchInput)}`);
+  }, [debouncedSearchInput, navigate]);
 
   const onClickSearch = () => {
     // "/"의 param으로 전달
