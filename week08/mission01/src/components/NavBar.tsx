@@ -44,6 +44,9 @@ const NavBar = ({ ...props }) => {
   const debouncedSearchInput = useDebounce(searchInput, 500);
 
   useEffect(() => {
+    if (!debouncedSearchInput) {
+      return;
+    }
     navigate(`/?search=${encodeURIComponent(debouncedSearchInput)}`);
   }, [debouncedSearchInput, navigate]);
 
