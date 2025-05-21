@@ -1,18 +1,21 @@
 import { useEffect, useState, RefObject } from "react";
 
 interface UseOutsideClickProps {
-  ref: RefObject<HTMLElement>;
-  additionalRefs?: RefObject<HTMLElement>[];
+  ref: RefObject<HTMLElement | null>;
+  additionalRefs?: RefObject<HTMLElement | null>[];
 }
 
 /**
  * component 외부 클릭 여부 감지
  * @param {Object} props
- * @param {RefObject<HTMLElement>} props.ref - 컴포넌트의 ref
- * @param {RefObject<HTMLElement>[]} [props.additionalRefs] - 추가적으로 '내부'라고 판단할 요소 ref 배열
+ * @param {RefObject<HTMLElement | null>} props.ref - 컴포넌트의 ref
+ * @param {RefObject<HTMLElement | null>[]} [props.additionalRefs] - 추가적으로 '내부'라고 판단할 요소 ref 배열
  * @returns {Object} - isOutside state
  */
-const useOutsideClick = ({ ref, additionalRefs = [] }: UseOutsideClickProps) => {
+const useOutsideClick = ({
+  ref,
+  additionalRefs = [],
+}: UseOutsideClickProps) => {
   const [isOutside, setIsOutside] = useState(false);
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -23,7 +26,10 @@ const useOutsideClick = ({ ref, additionalRefs = [] }: UseOutsideClickProps) => 
     }
 
     for (const additionalRef of additionalRefs) {
-      if (additionalRef.current && additionalRef.current.contains(event.target as Node)) {
+      if (
+        additionalRef.current &&
+        additionalRef.current.contains(event.target as Node)
+      ) {
         isInside = true;
         break;
       }
