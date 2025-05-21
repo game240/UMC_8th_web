@@ -10,6 +10,8 @@ import ItemThumbnail from "../components/landing/ItemThumbnail";
 import LandingSkeleton from "../components/landing/LandingSkeleton";
 import Toggle from "../components/Toggle";
 
+import { useThrottle } from "../hooks/useThrottle";
+
 import axiosClient from "../services/api";
 
 import { Lp } from "../types/lp";
@@ -64,6 +66,8 @@ const Landing = () => {
     initialPageParam: 0,
   });
 
+  const throttledFetch = useThrottle(fetchNextPage, 3000);
+
   const loadMoreRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!loadMoreRef.current || !hasNextPage) {
@@ -72,7 +76,7 @@ const Landing = () => {
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        fetchNextPage();
+        throttledFetch();
       }
     });
 
@@ -80,7 +84,7 @@ const Landing = () => {
     return () => {
       observer.disconnect();
     };
-  }, [fetchNextPage, hasNextPage]);
+  }, [throttledFetch, hasNextPage]);
 
   if (isLoading) {
     return (
