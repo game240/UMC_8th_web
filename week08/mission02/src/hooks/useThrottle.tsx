@@ -1,10 +1,8 @@
 import { useRef, useCallback } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useThrottle<T extends (...args: any[]) => any>(
-  fn: T,
-  delay: number
-): (...args: Parameters<T>) => ReturnType<T> {
+export function useThrottle<
+  T extends (...args: Parameters<T>) => ReturnType<T>
+>(fn: T, delay: number): (...args: Parameters<T>) => ReturnType<T> | undefined {
   const lastCall = useRef(0);
 
   return useCallback(
