@@ -1,17 +1,14 @@
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import { useDispatch, useSelector } from "../hooks/useCustomRedux";
-import type { RootState } from "../store/store";
 import { useEffect } from "react";
-import { CalculateTotal } from "../slices/cartSlice";
+import { useCartActions, useCartInfo } from "../hooks/useCartStore";
 
 const Navbar = () => {
-  const { amount, cartItems } = useSelector((state: RootState) => state.cart);
-
-  const dispatch = useDispatch();
+  const { amount, cartItems } = useCartInfo();
+  const { calculateTotal } = useCartActions();
 
   useEffect(() => {
-    dispatch(CalculateTotal());
-  }, [dispatch, cartItems]);
+    calculateTotal();
+  }, [cartItems, calculateTotal]);
   return (
     <nav className="flex justify-between items-center p-5 bg-gray-800 text-white">
       <h1 className="text-2xl font-semibold">Music</h1>

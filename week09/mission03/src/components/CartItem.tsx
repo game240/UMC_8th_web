@@ -1,30 +1,25 @@
 import type React from "react";
 import type { Item } from "../types/cart";
-import { useDispatch } from "../hooks/useCustomRedux";
-import {
-  incrementAmount,
-  decrementAmount,
-  removeItem,
-} from "../slices/cartSlice";
+import { useCartActions } from "../hooks/useCartStore";
 
 interface CartItemProps {
   item: Item;
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
-  const dispatch = useDispatch();
+  const { increase, decrease, removeItem } = useCartActions();
 
   const handleIncreaseCount = () => {
-    dispatch(incrementAmount({ id: item.id }));
+    increase(item.id);
   };
 
   const handleDecreaseCount = () => {
     if (item.amount === 1) {
-      dispatch(removeItem({ id: item.id }));
+      removeItem(item.id);
       return;
     }
 
-    dispatch(decrementAmount({ id: item.id }));
+    decrease(item.id);
   };
 
   return (

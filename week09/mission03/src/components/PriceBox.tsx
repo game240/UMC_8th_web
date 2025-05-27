@@ -1,17 +1,18 @@
 import { useDispatch, useSelector } from "../hooks/useCustomRedux";
-import { clearCart } from "../slices/cartSlice";
 import { closeModal, openModal } from "../slices/modalSlice";
 import type { RootState } from "../store/store";
 import DeleteDialog from "./DeleteDialog";
+import { useCartActions, useCartInfo } from "../hooks/useCartStore";
 
 const PriceBox = () => {
-  const { total } = useSelector((state: RootState) => state.cart);
+  const { clearCart } = useCartActions();
+  const { total } = useCartInfo();
   const { isModalOpen } = useSelector((state: RootState) => state.modal);
 
   const dispatch = useDispatch();
 
   const handleClearCart = () => {
-    dispatch(clearCart());
+    clearCart();
     dispatch(closeModal());
   };
   return (
