@@ -1,0 +1,35 @@
+import type React from "react";
+import type { item } from "../types/cart";
+
+interface CartItemProps {
+  item: item;
+}
+
+const CartItem: React.FC<CartItemProps> = ({ item }) => {
+  return (
+    <div className="flex items-center p-4 border-b border-gray-200">
+      <img
+        src={item.img}
+        alt={item.title}
+        className="w-20 h-20 object-cover rounded mr-4"
+      />
+      <div className="flex-1">
+        <h3 className="text-xl font-semibold">{item.title}</h3>
+        <p className="text-sm text-gray-600">{item.singer}</p>
+        <p className="text-sm text-gray-600 font-bold">{item.price} 원</p>
+      </div>
+
+      <div className="flex items-center">
+        <button className="px-3 py-1 bg-gray-300 text-gray-800 rounded-l hover:bg-gray-400 cursor-pointer">
+          -
+        </button>
+        <span className="px-3">{item.amount}</span>
+        <button className="px-3 py-1 bg-gray-300 text-gray-800 rounded-r hover:bg-gray-400 cursor-pointer">
+          +
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default CartItem;

@@ -1,5 +1,13 @@
+import CartList from "./components/CartList";
+import NavBar from "./components/Navbar";
+
 function App() {
-  return <p className="text-3xl font-bold underline">hello</p>;
+  return (
+    <>
+      <NavBar />
+      <CartList />
+    </>
+  );
 }
 
 export default App;
