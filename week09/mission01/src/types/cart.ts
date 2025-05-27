@@ -1,8 +1,8 @@
-export type item = {
+export type Item = {
   id: string;
   title: string;
   singer: string;
-  price: string;
+  price: number;
   img: string;
   amount: number;
 };

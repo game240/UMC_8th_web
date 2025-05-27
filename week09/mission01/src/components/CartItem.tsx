@@ -1,11 +1,32 @@
 import type React from "react";
-import type { item } from "../types/cart";
+import type { Item } from "../types/cart";
+import { useDispatch } from "../hooks/useCustomRedux";
+import {
+  incrementAmount,
+  decrementAmount,
+  removeItem,
+} from "../slices/cartSlice";
 
 interface CartItemProps {
-  item: item;
+  item: Item;
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
+  const dispatch = useDispatch();
+
+  const handleIncreaseCount = () => {
+    dispatch(incrementAmount({ id: item.id }));
+  };
+
+  const handleDecreaseCount = () => {
+    if (item.amount === 1) {
+      dispatch(removeItem({ id: item.id }));
+      return;
+    }
+
+    dispatch(decrementAmount({ id: item.id }));
+  };
+
   return (
     <div className="flex items-center p-4 border-b border-gray-200">
       <img
@@ -20,11 +41,17 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       </div>
 
       <div className="flex items-center">
-        <button className="px-3 py-1 bg-gray-300 text-gray-800 rounded-l hover:bg-gray-400 cursor-pointer">
+        <button
+          className="px-3 py-1 bg-gray-300 text-gray-800 rounded-l hover:bg-gray-400 cursor-pointer"
+          onClick={handleDecreaseCount}
+        >
           -
         </button>
         <span className="px-3">{item.amount}</span>
-        <button className="px-3 py-1 bg-gray-300 text-gray-800 rounded-r hover:bg-gray-400 cursor-pointer">
+        <button
+          className="px-3 py-1 bg-gray-300 text-gray-800 rounded-r hover:bg-gray-400 cursor-pointer"
+          onClick={handleIncreaseCount}
+        >
           +
         </button>
       </div>
