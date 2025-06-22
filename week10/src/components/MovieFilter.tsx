@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import type { MovieFilters, MovieLanguage } from "../types/movie";
 import MovieInput from "./MovieInput";
 
@@ -68,4 +68,4 @@ const MovieFilter = ({ onChange }: MovieFilterProps) => {
   );
 };
 
-export default MovieFilter;
+export default memo(MovieFilter);

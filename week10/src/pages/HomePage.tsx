@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import MovieList from "../components/MovieList";
 import useFetch from "../hooks/useFetch";
 import type { MovieFilters, MovieResponse } from "../types/movie";
@@ -21,9 +21,12 @@ const HomePage = () => {
     ...axiosRequestConfig,
   });
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  const handleMovieFilters = useCallback(
+    (filters: MovieFilters) => {
+      setFilter(filters);
+    },
+    [setFilter]
+  );
 
   if (error) {
     return <p>Error: {error}</p>;
@@ -31,8 +34,8 @@ const HomePage = () => {
 
   return (
     <main className="w-full">
-      <MovieFilter onChange={setFilter} />
-      <MovieList movies={data?.results || []} />
+      <MovieFilter onChange={handleMovieFilters} />
+      {loading ? <p>Loading...</p> : <MovieList movies={data?.results || []} />}
     </main>
   );
 };
