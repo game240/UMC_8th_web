@@ -20,7 +20,7 @@ const HomePage = () => {
   }
 
   return (
-    <main>
+    <main className="w-full">
       <MovieList movies={data?.results || []} />
     </main>
   );
