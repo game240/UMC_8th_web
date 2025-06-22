@@ -21,3 +21,11 @@ export interface MovieResponse {
   total_pages: number;
   total_results: number;
 }
+
+export interface MovieFilters {
+  query: string;
+  include_adult: boolean;
+  language: MovieLanguage;
+}
+
+export type MovieLanguage = "ko-KR" | "en-US";
