@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import MovieList from "../components/MovieList";
 import useFetch from "../hooks/useFetch";
 import type { MovieFilters, MovieResponse } from "../types/movie";
@@ -11,8 +11,14 @@ const HomePage = () => {
     language: "ko-KR",
   });
 
+  const axiosRequestConfig = useMemo(() => {
+    return {
+      params: filter,
+    };
+  }, [filter]);
+
   const { data, loading, error } = useFetch<MovieResponse>("/search/movie", {
-    params: filter,
+    ...axiosRequestConfig,
   });
 
   if (loading) {
